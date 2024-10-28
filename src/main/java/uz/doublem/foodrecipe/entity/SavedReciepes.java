@@ -9,5 +9,4 @@ public class SavedReciepes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private User owner;
-    private
 }
