@@ -1,4 +1,4 @@
-package uz.doublem.foodrecipe.enums;
+package uz.doublem.foodrecipe.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
