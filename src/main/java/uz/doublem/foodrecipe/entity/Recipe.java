@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "recipe")
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +50,6 @@ public class Recipe {
 
     @Column(name = "video_url")
     private String videoUrl;
-
-    @Enumerated(EnumType.STRING)
-    private Kitchen kitchen;
+    @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
+    private List<View> views;
 }
