@@ -1,17 +1,16 @@
 package uz.doublem.foodrecipe.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
-@Data
-public class SavedReciepes {
+public class View {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
-    private User owner;
+    @JoinColumn(name = "user_id")
+    private User user;
     @ManyToOne
+    @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 }
