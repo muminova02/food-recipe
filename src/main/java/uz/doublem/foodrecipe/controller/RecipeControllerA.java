@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.doublem.foodrecipe.entity.SavedReciepes;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.payload.RecipeDTO_A;
 import uz.doublem.foodrecipe.payload.UserDTO;
 import uz.doublem.foodrecipe.repository.SavedRecipeRepository_A;
 import uz.doublem.foodrecipe.repository.UserRepository;
@@ -41,5 +42,19 @@ public class RecipeControllerA {
 
         return ResponseEntity.ok(savedRecipes);
     }
+
+
+
+    @GetMapping("/ingrident")
+    public ResponseEntity<?> recipeIngrident(@RequestBody RecipeDTO_A recipeDTO_a) {
+    return null;
+
+    }
+
+
+
+
+
+
 
 }
