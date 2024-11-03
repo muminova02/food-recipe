@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,16 +33,14 @@ public class User implements UserDetails {
     private Integer following_count =0;
     private Integer followers_count =0;
     private String code;
-
+    private Boolean verified = false;
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Attachment attachment;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<User> followers;
     @ManyToOne(fetch = FetchType.LAZY)
     private Location location;
-
-    @CreationTimestamp
-    private Timestamp created_at;
+    private LocalDateTime generetedCodeTime;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -5,11 +5,15 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Random;
 
+@Component
 public class SmsService {
-    @Bean
+
     @SneakyThrows
     public void sendSmsToUser(String email, String text) {
         String subject = String.format("<h1>this is code to confirm your account<a href=https://kun.uz> %s<a/>, please do not share this code with anyone</h1>", text);
@@ -21,13 +25,13 @@ public class SmsService {
         Authenticator auth = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("abror01042001@gmail.com", "tnpfvoapprujggkk");
+                return new PasswordAuthentication("your@gmail.com", "yourPassword");
             }
         };
         Session session = Session.getInstance(properties, auth);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("abror01042001@gmail.com"));
+        message.setFrom(new InternetAddress("your@gmail.com"));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
         message.setSubject(text);
 
@@ -35,5 +39,18 @@ public class SmsService {
 
         Transport.send(message);
 
+    }
+
+    public String generateCode(){
+        HashSet<Integer> set = new HashSet<>();
+        Random random = new Random();
+        int n = 0;
+        while (set.size() > 6){
+            n = random.nextInt();
+            set.add(n);
+        }
+        StringBuilder sb = new StringBuilder();
+        set.forEach(sb::append);
+        return sb.toString();
     }
 }

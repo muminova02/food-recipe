@@ -1,4 +1,6 @@
 package uz.doublem.foodrecipe.payload;
 
-public record UserDTO(String name, String email, String password) {
+import java.time.LocalDateTime;
+
+public record UserDTO(String name, String email, String password,String code) {
 }

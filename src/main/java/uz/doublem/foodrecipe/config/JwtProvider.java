@@ -14,10 +14,10 @@ import java.util.Date;
 @Component
 public class JwtProvider{
 
-   @Value("${my.token.key}")
-   private String key;
-    @Value("${my.token.expire.time}")
-   private Long expireTime;
+    @Value("${my_token.key}")
+    String key;
+    @Value("${my_token.expire_time}")
+    Long expireTime;
 
     public String generateToken(UserDetails userDetails){
         Date date = new Date(System.currentTimeMillis() + expireTime);
