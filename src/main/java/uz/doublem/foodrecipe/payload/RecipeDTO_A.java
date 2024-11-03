@@ -1,7 +1,12 @@
 package uz.doublem.foodrecipe.payload;
 
+import lombok.Builder;
+import lombok.Data;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.entity.View;
 
-public record RecipeDTO_A() {
+import java.util.List;
+@Builder
+public record RecipeDTO_A(String link, Integer averageReiting, List<View> views) {
 
 }
