@@ -1,12 +1,23 @@
 spring:
   application:
     name: food-app
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/food_app
+    url: jdbc:postgresql://localhost:5432/food_recipe
     username: postgres
-    password: root123
+    password: 19972013
     driver-class-name: org.postgresql.Driver
+
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
+
+my_token:
+  key: hereIsMySecretKeyvshdkjfknsfgjfndjf
+  expire_time: 86400000
+  api:
+    version: 5.0
+    eskiz:
+      token:
+

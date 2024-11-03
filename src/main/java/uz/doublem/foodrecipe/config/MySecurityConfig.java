@@ -1,8 +1,10 @@
 package uz.doublem.foodrecipe.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,13 +19,20 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 @RequiredArgsConstructor
 @Configuration
 public class MySecurityConfig {
-    private final MyFilter myFilter;
-    private final UserRepository userRepository;
+    private  MyFilter myFilter;
+private UserRepository userRepository;
+
+    @Autowired
+    public MySecurityConfig(@ Lazy MyFilter myFilter, UserRepository userRepository) {
+        this.myFilter = myFilter;
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
             return new BCryptPasswordEncoder();
         }
+
     public SecurityFilterChain mySecurity(HttpSecurity http) throws Exception {
 
                http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
