@@ -9,7 +9,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   servlet:
     multipart:
       enabled: true
@@ -19,7 +19,7 @@ spring:
 
 
 my_token:
-  key: shaxobiddindevjknsjnvfwefbnwujnosdwssedfwef
+  key: abbosdevrtpkglfdsfjkjdfdsfhsdjglk
   expire_time: 86400000
 
 
@@ -30,3 +30,4 @@ server:
 photo:
   upload:
     path  : src/main/resources/photo-uploads
+

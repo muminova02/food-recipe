@@ -1,5 +1,4 @@
 package uz.doublem.foodrecipe.entity;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -57,3 +56,4 @@ public class Attachment
         }
     }
 }
+
