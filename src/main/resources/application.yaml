@@ -24,7 +24,7 @@ my_token:
 
 
 server:
-  base-url : https://localhost:8080/api/photo
+  base-url : http://localhost:8080/api/attachment
 
 
 photo:

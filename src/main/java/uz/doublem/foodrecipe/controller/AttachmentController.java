@@ -25,8 +25,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Photo - Фото")
-@RequestMapping("/api/photo")
+@Tag(name = "Photo - Video ")
+@RequestMapping("/api/attachment")
 public class AttachmentController
 {
     private final AttachmentService attachmentService;
@@ -49,9 +49,8 @@ public class AttachmentController
         return ResponseEntity.status(201).body(attachmentService.upload(photo));
     }
 
-    @GetMapping("/{name}")
-    @Operation(summary = "Show a photo or video - Показать фото")
-    @Hidden
+    @GetMapping("/name/{name}")
+    @Operation(summary = "Show a photo or video by name - Показать фото")
     public ResponseEntity<byte[]> getAttachmentByName(@PathVariable(name = "name") String name)
     {
         return attachmentService.findByName(name);
@@ -60,12 +59,18 @@ public class AttachmentController
 
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
+    @Operation(summary = "Show a photo or video by id- Показать фото")
     public ResponseEntity<byte[]> getAttachmentById(@PathVariable(name = "id") String  id)
     {
         return attachmentService.findById(id);
     }
 
+    @GetMapping("/{nameOrId}")
+    @Operation(summary = "Show a photo or video by name or ID")
+    public ResponseEntity<byte[]> getAttachmentByNameOrId(@PathVariable(name = "nameOrId") String nameOrId) {
+        return attachmentService.findByNameOrId(nameOrId);
+    }
 
 
 
