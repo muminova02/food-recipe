@@ -11,9 +11,9 @@ public class ExceptionHandlerService {
     public ResponseEntity<?> handelException(Exception e) {
         ResponseMessage response = ResponseMessage
                 .builder()
-                .success(false)
+                .status(false)
                 .data(e.getMessage())
-                .message("something went wrong")
+                .text("something went wrong")
                 .build();
 
         return ResponseEntity.status(400).body(response);
