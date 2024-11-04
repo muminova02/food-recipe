@@ -156,8 +156,8 @@ public class AttachmentService
                 deleteFromFile(fromDb.getPath());
 
             saveToFile(file, fromDb);
-            response.setMessage("Updated");
-            response.setSuccess(true);
+            response.setText("Updated");
+            response.setStatus(true);
             response.setData(new AttachmentDto(attachmentRepository.save(fromDb)));
             return response;
         } catch (IOException e)
@@ -204,8 +204,8 @@ public class AttachmentService
         List<Attachment> attachments = new ArrayList<>();
         attachment.forEach(i -> attachments.add(save(i)));
         response.setData(attachments);
-        response.setMessage("Uploaded attachment successfully");
-        response.setSuccess(true);
+        response.setText("Uploaded attachment successfully");
+        response.setStatus(true);
         return response;
     }
 
@@ -217,7 +217,7 @@ public class AttachmentService
         try
         {
             attachmentRepository.deleteById(attachment.getId());
-            response.setMessage("Deleted");
+            response.setText("Deleted");
         } catch (Exception e)
         {
             Attachment attachment11 = new Attachment();
@@ -228,13 +228,13 @@ public class AttachmentService
         try
         {
             deleteFromFile(attachment.getPath());
-            response.setMessage("Deleted on file");
+            response.setText("Deleted on file");
         } catch (IOException e)
         {
             logger.error(e.getMessage());
             throw new RuntimeException("Delete failed: " + attachment.getPath());
         }
-        response.setSuccess(true);
+        response.setStatus(true);
         response.setData(id);
         return response;
     }
