@@ -3,7 +3,9 @@ package uz.doublem.foodrecipe.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +18,7 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MySecurityConfig {
     private final MyFilter myFilter;
     private final UserRepository userRepository;
@@ -24,6 +27,7 @@ public class MySecurityConfig {
     public PasswordEncoder passwordEncoder(){
             return new BCryptPasswordEncoder();
         }
+        @Bean
     public SecurityFilterChain mySecurity(HttpSecurity http) throws Exception {
 
                http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
@@ -31,10 +35,8 @@ public class MySecurityConfig {
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
-                       .requestMatchers("")
+                       .requestMatchers("/auth/**")
                        .permitAll()
-                       .requestMatchers(HttpMethod.POST)
-                       .hasRole("USER")
                        .anyRequest()
                        .authenticated();
 
