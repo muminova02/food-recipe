@@ -38,12 +38,12 @@ public class DataLoader implements CommandLineRunner
 
     private void securityUser()
     {
-        String s = "admin-cha";
+        String s = "admin@gmail.com";
         if (!userRepository.existsByEmail(s))
         {
             User user = new User();
 //            user.setRole("ADMIN");
-//            user.setPhoneNumber(s);
+            user.setEmail(s);
             user.setPassword_hash(passwordEncoder.encode("root123"));
             userRepository.save(user);
         }

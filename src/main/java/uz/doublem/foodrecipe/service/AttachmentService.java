@@ -60,7 +60,7 @@ public class AttachmentService
             Attachment attachment = attachmentRepository.save(new Attachment());
             saveToFile(file, attachment);
             logger.info("Attachment saved to database{}", attachment);
-            return attachment;
+            return attachmentRepository.save(attachment);
         } catch (IOException e)
         {
             throw new RuntimeException("Attachment save failed: "+ file.getOriginalFilename(), e);
@@ -178,7 +178,7 @@ public class AttachmentService
         attachment.setName(originalFileName);
         attachment.setPath(filePath.toFile().getAbsolutePath());
         attachment.setType(file.getContentType());
-        attachment.setUrl(baseUrl + "/api/attachment/" + attachment.getName());
+        attachment.setUrl(baseUrl + "/id/" + attachment.getId());
     }
 
     public void deleteFromFile(String filePath) throws IOException
@@ -237,5 +237,19 @@ public class AttachmentService
         response.setStatus(true);
         response.setData(id);
         return response;
+    }
+
+    public ResponseEntity<byte[]> findByNameOrId(String nameOrId) {
+        try
+        {
+            Attachment attachment = attachmentRepository.findByNameOrId(nameOrId).orElseThrow(() -> new RuntimeException("Attachment not found: " + nameOrId));
+
+            return getResponseEntity(attachment);
+
+        } catch (IOException e)
+        {
+            logger.error(e.getMessage());
+            throw new RuntimeException("Attachment not found: " + nameOrId, e);
+        }
     }
 }
