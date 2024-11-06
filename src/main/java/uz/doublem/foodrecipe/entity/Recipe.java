@@ -1,10 +1,9 @@
 package uz.doublem.foodrecipe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
@@ -50,6 +49,16 @@ public class Recipe {
 
     @Column(name = "video_url")
     private String videoUrl;
+
     @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<View> views;
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<IngredientAndQuantity> ingredientAndQuantities;
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Step> steps;
 }

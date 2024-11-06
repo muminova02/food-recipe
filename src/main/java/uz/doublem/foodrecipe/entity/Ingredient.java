@@ -21,10 +21,5 @@ public class Ingredient {
     @Column(nullable = false)
     private String name;
 
-    private Integer quantity;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id")
-    private Recipe recipe;
 
 }

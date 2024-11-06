@@ -1,6 +1,9 @@
 package uz.doublem.foodrecipe.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 @Entity
 public class View {
@@ -12,5 +15,6 @@ public class View {
     private User user;
     @ManyToOne
     @JoinColumn(name = "recipe_id")
+    @JsonBackReference
     private Recipe recipe;
 }
