@@ -51,14 +51,14 @@ public class Recipe {
     private String videoUrl;
 
     @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<View> views;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<IngredientAndQuantity> ingredientAndQuantities;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Step> steps;
 }

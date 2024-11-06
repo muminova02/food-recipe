@@ -21,7 +21,8 @@ public class Step {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
-    @JsonBackReference
+    @ToString.Exclude
+    @JsonIgnore
     private Recipe recipe;
 
     private Integer step_number ;

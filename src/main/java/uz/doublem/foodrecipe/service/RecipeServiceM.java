@@ -32,88 +32,93 @@ public class RecipeServiceM {
 
 
 
-    public ResponseMessage  addRecipe(String json, List<MultipartFile> attachments, User curentUser) {
-        ResponseMessage response = new ResponseMessage();
-        try {
-            if (attachments.isEmpty() || attachments.get(0) == null && attachments.get(1) == null && attachments.size() < 3) {
-                return ResponseMessage.builder().status(false).text("faqat 1 ta Rasim va 1 ta Video yuboring").data(new RuntimeException("wrong with attachment")).build();
-            }
+    public ResponseMessage  addRecipe(String json, List<MultipartFile> attachments, User currentUser) {
+            ResponseMessage response = new ResponseMessage();
+            try {
+                // Validatsiya va qo‘shimcha fayllarni tekshirish
+                if (attachments.isEmpty() || attachments.size() < 2) {
+                    return ResponseMessage.builder().status(false)
+                            .text("1 ta Rasim va 1 ta Video yuboring")
+                            .data(new RuntimeException("wrong with attachment")).build();
+                }
 
-            RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
+                // Recipe DTO ni parsing qilish
+                RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
 
-            Recipe recipe = new Recipe();
-            recipe.setDescription(recipeDTO.getDescription());
-            recipe.setTitle(recipeDTO.getTitle());
-            recipe.setAuthor(curentUser);
-            recipe.setAverageRating(1);
-            recipe.setCookingTime(recipeDTO.getCookingTime());
-            Recipe saveRecipe = recipeRepositoryM.save(recipe);
-            response.setText("Recipe SAVED IN STEP 1");
-            Optional<Category> optionCategory = categoryRepository.findById(recipeDTO.getCategory_id());
-            if (optionCategory.isEmpty()) {
-                response.setStatus(false);
-                response.setText(response.getText() + "Id ga mos category topilmadi");
-                response.setData(recipeDTO.getCategory_id());
+                // Recipe ma'lumotlarini saqlash
+                Recipe recipe = Recipe.builder()
+                        .title(recipeDTO.getTitle())
+                        .description(recipeDTO.getDescription())
+                        .author(currentUser)
+                        .averageRating(1)
+                        .cookingTime(recipeDTO.getCookingTime())
+                        .build();
+
+                Optional<Category> optionCategory = categoryRepository.findById(recipeDTO.getCategory_id());
+                if (optionCategory.isEmpty()) {
+                    return ResponseMessage.builder()
+                            .status(false)
+                            .text("Category topilmadi")
+                            .data(recipeDTO.getCategory_id()).build();
+                }
+                recipe.setCategory(optionCategory.get());
+                recipeRepositoryM.save(recipe);
+
+                // Attachments qo'shish
+                addAttachmentsToRecipe(attachments, recipe);
+
+                // Ingredient va Steps qo'shish
+                if (!recipeDTO.getIngredientList().isEmpty()) {
+                    saveIngredientsList(recipeDTO.getIngredientList(), recipe, response);
+                }
+                if (!recipeDTO.getStepsList().isEmpty()) {
+                    saveStepsList(recipe, recipeDTO.getStepsList(), response);
+                }
+
+                response.setText("Finally successfully saved");
+                response.setStatus(true);
+                response.setData(recipeDTO);
                 return response;
+
+            } catch (Exception e) {
+                throw new RuntimeException("Exception during recipe processing", e);
             }
-            recipe.setCategory(optionCategory.get());
-            String title = recipe.getTitle();
-            Integer id = recipe.getId();
-            String fullTitle = title + "_&" + id;
-            String link = "http://localhost:8080/api/recipe/link/" + fullTitle;
-            recipe.setLink(link);
-            MultipartFile multipartFile1 = attachments.get(0);
-            Attachment attachment = attachmentService.save(multipartFile1);
-
-            MultipartFile multipartFile2 = attachments.get(1);
-            Attachment attachment2 = attachmentService.save(multipartFile2);
-            if (attachment.getType().startsWith("image")) {
-                saveRecipe.setImageUrl(attachment.getUrl());
-                saveRecipe.setVideoUrl(attachment2.getUrl());
-            }else {
-                saveRecipe.setVideoUrl(attachment.getUrl());
-                saveRecipe.setImageUrl(attachment2.getUrl());
-            }
-            Recipe saveRecipe2 = recipeRepositoryM.save(saveRecipe);
-            response.setText(response.getText() + ", Step 2 >> Attachment VIDEO AND Audio added");
-
-            if (!recipeDTO.getIngredientList().isEmpty()) {
-               saveRecipe2 = saveIngredientsList(recipeDTO.getIngredientList(), saveRecipe2, response);
-            }
-
-            if (!recipeDTO.getStepsList().isEmpty()) {
-                saveRecipe2 = saveStepsList(saveRecipe2, recipeDTO.getStepsList(), response);
-            }
-
-            response.setText(response.getText() + " , Finally successfully saved");
-            response.setStatus(true);
-            response.setData(recipeDTO);
-            return response;
-
-        } catch (JsonMappingException e) {
-            throw new RuntimeException("Json Mapping Exception",e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("json Processing Exception",e);
         }
 
-    }
+        private void addAttachmentsToRecipe(List<MultipartFile> attachments, Recipe recipe) {
+            Attachment attachment = attachmentService.save(attachments.get(0));
+            Attachment attachment2 = attachmentService.save(attachments.get(1));
 
-    private Recipe saveStepsList(Recipe saveRecipe2, List<StepsDTOAdd> stepDTOList, ResponseMessage response) {
+            if (attachment.getType().startsWith("image")) {
+                recipe.setImageUrl(attachment.getUrl());
+                recipe.setVideoUrl(attachment2.getUrl());
+            } else {
+                recipe.setVideoUrl(attachment.getUrl());
+                recipe.setImageUrl(attachment2.getUrl());
+            }
+            recipeRepositoryM.save(recipe);
+        }
+
+
+
+
+    private boolean saveStepsList(Recipe saveRecipe2, List<StepsDTOAdd> stepDTOList, ResponseMessage response) {
         List<Step> stepsList = new ArrayList<>();
         stepDTOList.forEach(step -> {
             Step step1 = new Step();
             step1.setDescription(step.getText());
             step1.setStep_number(step.getStep_number());
             step1.setRecipe(saveRecipe2);
-            stepRepository.save(step1);
             stepsList.add(step1);
         });
+        stepRepository.saveAll(stepsList);
         saveRecipe2.setSteps(stepsList);
         response.setText(response.getText() + ", Step 4 >> Steps added");
-        return recipeRepositoryM.save(saveRecipe2);
+        recipeRepositoryM.save(saveRecipe2);
+        return true;
     }
 
-    private Recipe saveIngredientsList(List<IngredientDTOAdd> ingredienTDTOList, Recipe saveRecipe2, ResponseMessage response) {
+    private boolean saveIngredientsList(List<IngredientDTOAdd> ingredienTDTOList, Recipe saveRecipe2, ResponseMessage response) {
         List<IngredientAndQuantity> ingredientAndQuantityList = new ArrayList<>();
         for (IngredientDTOAdd ingredientDTOAdd : ingredienTDTOList) {
             Integer ingredientId = ingredientDTOAdd.getIngredientId();
@@ -125,13 +130,14 @@ public class RecipeServiceM {
                         .quantity(ingredientDTOAdd.getIngredientQuantity())
                         .recipe(saveRecipe2)
                         .build();
-                ingreAndQuanRepo.save(ingredientAndQuantity);
                 ingredientAndQuantityList.add(ingredientAndQuantity);
             }
         }
+        ingreAndQuanRepo.saveAll(ingredientAndQuantityList);
         saveRecipe2.setIngredientAndQuantities(ingredientAndQuantityList);
         response.setText(response.getText() + ", Step 3 >> Ingredient added ");
-        return recipeRepositoryM.save(saveRecipe2);
+        recipeRepositoryM.save(saveRecipe2);
+        return true;
     }
 
 

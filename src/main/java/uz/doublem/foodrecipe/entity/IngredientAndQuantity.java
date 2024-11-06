@@ -18,13 +18,12 @@ public class IngredientAndQuantity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "ingrdient_id")
     private Ingredient ingredient;
 
     private String quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id")
-    @JsonBackReference
+    @ToString.Exclude
+    @JsonIgnore
     private Recipe recipe;
 }
