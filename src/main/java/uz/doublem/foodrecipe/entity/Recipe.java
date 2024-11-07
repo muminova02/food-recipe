@@ -9,7 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

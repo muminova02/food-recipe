@@ -8,16 +8,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
-import uz.doublem.foodrecipe.payload.CategoryDto;
-import uz.doublem.foodrecipe.payload.IngredientDTO;
-import uz.doublem.foodrecipe.payload.RecipeDTOAdd;
-import uz.doublem.foodrecipe.payload.ResponseMessage;
+import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.UserRepository;
 import uz.doublem.foodrecipe.service.RecipeServiceM;
 import uz.doublem.foodrecipe.service.StepsService;
@@ -70,7 +68,7 @@ public class RecipeControllerM {
                         )))
         @RequestPart(name = "file", required = false) List<MultipartFile> attachments){
 //        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(3L);
+        Optional<User> byId = userRepository.findById(2L);
 
         ResponseMessage res = recipeServiceM.addRecipe(json,attachments,byId.get());
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
@@ -104,6 +102,47 @@ public class RecipeControllerM {
         ResponseMessage res =  recipeServiceM.addIngredientList(json,attachments);
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
     }
+
+
+    @Operation(summary = "Upload photo and Video to recipe ")
+    @PostMapping(value = "/{id}/attachments",consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    public ResponseEntity<?> upload(
+            @PathVariable Integer id,
+            @Parameter(
+                    description = "Select picture on format .jpg or .png and .svg or video on format .mp4, .avi, .mov for video,",
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(
+                                    type = "string",
+                                    format = "binary",
+                                    example = "image.png, or video.mp4"
+                            )))
+            @RequestPart(name = "file", required = false) List<MultipartFile> attachments)
+    {
+        ResponseMessage res = recipeServiceM.upload(attachments,id);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+
+    @PostMapping("/{id}/steps")
+    private ResponseEntity<?> addStepsList(
+            @PathVariable Integer id,
+            @RequestBody List<StepsDTOAdd> stepsDTOAdds){
+        ResponseMessage res =  recipeServiceM.addStepsToRecipe(stepsDTOAdds,id);
+        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+    }
+
+
+    @PostMapping("/{id}/ingredients")
+    private ResponseEntity<?> addIngredientListToRecipe(
+            @PathVariable Integer id,
+            @RequestBody List<IngredientDTOAdd> ingredientDTOAdds){
+        ResponseMessage res =  recipeServiceM.addIngredientAndQuantityListToRecipe(ingredientDTOAdds,id);
+        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+    }
+
+
 
 
 

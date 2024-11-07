@@ -13,10 +13,16 @@ import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.*;
+import uz.doublem.foodrecipe.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import uz.doublem.foodrecipe.util.Util.*;
+
+import static java.util.Collections.*;
+import static uz.doublem.foodrecipe.util.Util.getResponseMes;
 
 @Service
 @RequiredArgsConstructor
@@ -35,17 +41,14 @@ public class RecipeServiceM {
     public ResponseMessage  addRecipe(String json, List<MultipartFile> attachments, User currentUser) {
             ResponseMessage response = new ResponseMessage();
             try {
-                // Validatsiya va qo‘shimcha fayllarni tekshirish
                 if (attachments.isEmpty() || attachments.size() < 2) {
                     return ResponseMessage.builder().status(false)
                             .text("1 ta Rasim va 1 ta Video yuboring")
                             .data(new RuntimeException("wrong with attachment")).build();
                 }
 
-                // Recipe DTO ni parsing qilish
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
 
-                // Recipe ma'lumotlarini saqlash
                 Recipe recipe = Recipe.builder()
                         .title(recipeDTO.getTitle())
                         .description(recipeDTO.getDescription())
@@ -64,18 +67,22 @@ public class RecipeServiceM {
                 recipe.setCategory(optionCategory.get());
                 recipeRepositoryM.save(recipe);
 
-                // Attachments qo'shish
                 addAttachmentsToRecipe(attachments, recipe);
 
-                // Ingredient va Steps qo'shish
                 if (!recipeDTO.getIngredientList().isEmpty()) {
-                    saveIngredientsList(recipeDTO.getIngredientList(), recipe, response);
+                    if (saveIngredientsList(recipeDTO.getIngredientList(), recipe)) {
+                        response.setText(response.getText() + ", Step 3 >> Ingredient added ");
+                    }
                 }
                 if (!recipeDTO.getStepsList().isEmpty()) {
-                    saveStepsList(recipe, recipeDTO.getStepsList(), response);
+                    if (saveStepsList(recipe, recipeDTO.getStepsList())) {
+                        response.setText(response.getText() + ", Step 4 >> Steps added");
+                    }else {
+                        response.setText(response.getText() + ", Step 4 >> Steps not add");
+                    }
                 }
 
-                response.setText("Finally successfully saved");
+                response.setText(response.getText() + " >> Finally successfully saved");
                 response.setStatus(true);
                 response.setData(recipeDTO);
                 return response;
@@ -100,9 +107,7 @@ public class RecipeServiceM {
         }
 
 
-
-
-    private boolean saveStepsList(Recipe saveRecipe2, List<StepsDTOAdd> stepDTOList, ResponseMessage response) {
+    private boolean saveStepsList(Recipe saveRecipe2, List<StepsDTOAdd> stepDTOList) {
         List<Step> stepsList = new ArrayList<>();
         stepDTOList.forEach(step -> {
             Step step1 = new Step();
@@ -113,12 +118,11 @@ public class RecipeServiceM {
         });
         stepRepository.saveAll(stepsList);
         saveRecipe2.setSteps(stepsList);
-        response.setText(response.getText() + ", Step 4 >> Steps added");
         recipeRepositoryM.save(saveRecipe2);
         return true;
     }
 
-    private boolean saveIngredientsList(List<IngredientDTOAdd> ingredienTDTOList, Recipe saveRecipe2, ResponseMessage response) {
+    private boolean saveIngredientsList(List<IngredientDTOAdd> ingredienTDTOList, Recipe saveRecipe2) {
         List<IngredientAndQuantity> ingredientAndQuantityList = new ArrayList<>();
         for (IngredientDTOAdd ingredientDTOAdd : ingredienTDTOList) {
             Integer ingredientId = ingredientDTOAdd.getIngredientId();
@@ -135,7 +139,6 @@ public class RecipeServiceM {
         }
         ingreAndQuanRepo.saveAll(ingredientAndQuantityList);
         saveRecipe2.setIngredientAndQuantities(ingredientAndQuantityList);
-        response.setText(response.getText() + ", Step 3 >> Ingredient added ");
         recipeRepositoryM.save(saveRecipe2);
         return true;
     }
@@ -196,5 +199,46 @@ public class RecipeServiceM {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Ingredient json Mapping Exception",e);
         }
+    }
+
+    public ResponseMessage upload(List<MultipartFile> attachments,Integer recipeId) {
+
+        if (attachments.isEmpty() || attachments.size() < 2) {
+            return ResponseMessage.builder().status(false)
+                    .text("1 ta Rasim va 1 ta Video yuboring")
+                    .data(new RuntimeException("wrong with attachment")).build();
+        }
+        Optional<Recipe> byId = recipeRepositoryM.findById(recipeId);
+        if (byId.isPresent()) {
+            addAttachmentsToRecipe(attachments,byId.get());
+        }else {
+            ResponseMessage.builder().status(false).text("recipe not found").data(recipeId).build();
+        }
+
+        return ResponseMessage.builder().text("attachments added to Recipe").status(true).data(attachments).build();
+    }
+
+    public ResponseMessage addStepsToRecipe(List<StepsDTOAdd> stepsDTOAdds, Integer recipeId) {
+        var byId = recipeRepositoryM.findById(recipeId);
+        if (byId.isPresent()) {
+            if (!saveStepsList(byId.get(),stepsDTOAdds)) {
+               return getResponseMes(false,"steps not added to recipe",stepsDTOAdds);
+            }
+        }else {
+            ResponseMessage.builder().status(false).text("recipe not found").data(recipeId).build();
+        }
+        return getResponseMes(true,"steps add to recipe",stepsDTOAdds);
+    }
+
+    public ResponseMessage addIngredientAndQuantityListToRecipe(List<IngredientDTOAdd> ingredientDTOAdds, Integer recipeId) {
+        Optional<Recipe> byId = recipeRepositoryM.findById(recipeId);
+        if (byId.isPresent()) {
+            if (!saveIngredientsList(ingredientDTOAdds,byId.get())) {
+                return getResponseMes(false,"ingredient not added to Recipe",ingredientDTOAdds);
+            }
+        }else {
+            ResponseMessage.builder().status(false).text("recipe not found").data(recipeId).build();
+        }
+        return getResponseMes(true,"ingredients add to recipe",ingredientDTOAdds);
     }
 }
