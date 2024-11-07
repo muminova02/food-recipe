@@ -11,6 +11,7 @@ import uz.doublem.foodrecipe.repository.IngridentsRepository_A;
 import uz.doublem.foodrecipe.repository.RecipeRepository_A;
 import uz.doublem.foodrecipe.repository.SavedRecipeRepository_A;
 import uz.doublem.foodrecipe.repository.UserRepository;
+import uz.doublem.foodrecipe.service.RecipeService_A;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,62 +23,42 @@ import java.util.Optional;
 @RequestMapping("/recipeA")
 public class RecipeControllerA {
 
-      final UserRepository userRepository;
-      final SavedRecipeRepository_A savedRecipeRepository;
-      final IngridentsRepository_A ingridentsRepository;
-      final RecipeRepository_A recipeRepository;
+    final RecipeService_A service;
 
 
 
 
     @GetMapping("/saved")
-    public ResponseMessage allSavedRecipes(@RequestBody UserDTO userDTO) {
-        User user = userRepository.findByEmail(userDTO.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<SavedReciepes> savedRecipes = savedRecipeRepository.findByUserId(user.getId())
-                .orElse(Collections.emptyList());
-
-        if (savedRecipes.isEmpty()) {
-            return ResponseMessage.builder().message("Recipes do not found").success(false).data(ResponseEntity.notFound()).build();
-        }
-
-        return ResponseMessage.builder().message("success").success(true).data(ResponseEntity.ok().body(savedRecipes)).build();
+    public ResponseEntity<?> allSavedRecipes(@RequestBody UserDTO userDTO) {
+        ResponseMessage responseMessage = service.allSavedRecipes(userDTO);
+        return ResponseEntity.status(200).body(responseMessage);
     }
 
 
 
     @GetMapping("/ingrident/{id}")
-    public ResponseMessage recipeIngrident(@PathVariable Integer id) {
-       List<Ingredient> ingredients = ingridentsRepository.findByRecipeId(id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
-       if (ingredients.isEmpty()) {
-           return ResponseMessage.builder().message("Ingredients do not found").success(false).data(ResponseEntity.notFound()).build();
-       }
-       return ResponseMessage.builder().message("success").success(true).data(ResponseEntity.ok().body(ingredients)).build();
+    public ResponseEntity<?> recipeIngrident(@PathVariable Integer id) {
+        ResponseMessage responseMessage = service.recipeIngrident(id);
+        return ResponseEntity.status(200).body(responseMessage);
     }
 
 
     @GetMapping("/ingrident/share/{recipe_id}")
-    public ResponseMessage ingridentShare(@PathVariable("recipe_id") Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
-        RecipeDTO_A build = RecipeDTO_A.builder().link(recipe.getLink()).build();
-        return ResponseMessage.builder().message("success").success(true).data(ResponseEntity.ok().body(build)).build();
+    public ResponseEntity<?> ingridentShare(@PathVariable("recipe_id") Integer recipe_id) {
+        ResponseMessage responseMessage = service.ingridentShare(recipe_id);
+        return ResponseEntity.status(200).body(responseMessage);
     }
 
 
     @GetMapping("/ingrident/more/rate/{recipe_id}")
-    public ResponseMessage ingridentMoreRate(@PathVariable("recipe_id") Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
-        RecipeDTO_A build = RecipeDTO_A.builder().averageReiting(recipe.getAverageRating()).build();
-        return ResponseMessage.builder().message("success").success(true).data(ResponseEntity.ok().body(build)).build();
+    public ResponseEntity<?> ingridentMoreRate(@PathVariable("recipe_id") Integer recipe_id) {
+        return ResponseEntity.status(200).body(service.ingridentMoreRate(recipe_id));
     }
 
 
     @GetMapping("/ingrident/reviews/{recipe_id}")
-    public ResponseMessage ingridentMoreReviews(@PathVariable("recipe_id") Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
-        RecipeDTO_A build = RecipeDTO_A.builder().views(recipe.getViews()).build();
-        return ResponseMessage.builder().message("success").success(true).data(ResponseEntity.ok().body(build)).build();
+    public ResponseEntity<?> ingridentMoreReviews(@PathVariable("recipe_id") Integer recipe_id) {
+    return ResponseEntity.status(200).body(service.ingridentMoreReviews(recipe_id));
     }
 
 
