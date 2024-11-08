@@ -4,10 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.repository.UserRepository;
@@ -29,8 +26,8 @@ public class HomeController {
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
     @GetMapping("/category/{id}/recipes")
-    public ResponseEntity<?> getRecipesByCategory(@PathVariable Integer id){
-        ResponseMessage responseMessage = homeService.getRecipesByCategoryId(id);
+    public ResponseEntity<?> getRecipesByCategory(@PathVariable Integer id, @RequestParam Integer size,@RequestParam Integer page){
+        ResponseMessage responseMessage = homeService.getRecipesByCategoryId(id,size,page);
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
 }

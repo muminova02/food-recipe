@@ -1,16 +1,16 @@
 package uz.doublem.foodrecipe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -38,7 +38,7 @@ public class Recipe {
     private String link;
 
     @Column(name = "average_rating")
-    private Integer averageRating;
+    private Double averageRating;
 
     private String description;
 
@@ -50,6 +50,16 @@ public class Recipe {
 
     @Column(name = "video_url")
     private String videoUrl;
+
     @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<View> views;
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<IngredientAndQuantity> ingredientAndQuantities;
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Step> steps;
 }

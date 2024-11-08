@@ -10,7 +10,24 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 215MB
+      max-file-size: 200MB
+      file-size-threshold: 2KB
+
 
 my_token:
   key: abbosdevrtpkglfdsfjkjdfdsfhsdjglk
   expire_time: 86400000
+
+
+server:
+  base-url : http://localhost:8080/api/attachment
+
+
+photo:
+  upload:
+    path  : src/main/resources/photo-uploads
+

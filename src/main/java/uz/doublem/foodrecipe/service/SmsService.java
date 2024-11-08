@@ -16,7 +16,7 @@ public class SmsService {
 
     @SneakyThrows
     public void sendSmsToUser(String email, String text) {
-        String subject = String.format("<h1>this is code to confirm your account<a href=https://kun.uz> %s<a/>, please do not share this code with anyone</h1>", text);
+        String subject = String.format("<h1>this is code to confirm your account %s <a/>, please do not share this code with anyone</h1>", text);
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "465");

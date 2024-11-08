@@ -29,12 +29,13 @@ public class MySecurityConfig {
         }
         @Bean
     public SecurityFilterChain mySecurity(HttpSecurity http) throws Exception {
+
                http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
                .csrf((c)-> c.disable())
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
-                       .requestMatchers("/auth/**", "/v3/api-docs/**","/swagger-ui/**")
+                       .requestMatchers("/auth/**")
                        .permitAll()
                        .anyRequest()
                        .authenticated();
