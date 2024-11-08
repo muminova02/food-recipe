@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.RecipeDTO_A;
+import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.UserDTO;
 import uz.doublem.foodrecipe.repository.IngridentsRepository_A;
 import uz.doublem.foodrecipe.repository.RecipeRepository_A;
@@ -32,14 +33,14 @@ public class RecipeService_A {
         User user = userRepository.findByEmail(userDTO.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<SavedReciepes> savedRecipes = savedRecipeRepository.findByUserId(user.getId())
+        List<SavedRecipes> savedRecipes = savedRecipeRepository.findByUserId(user.getId())
                 .orElse(Collections.emptyList());
 
         if (savedRecipes.isEmpty()) {
-            return ResponseMessage.builder().message("Recipes do not found").success(false).data(ResponseEntity.notFound()).build();
+            return ResponseMessage.builder().text("Recipes do not found").status(false).data(ResponseEntity.notFound()).build();
         }
 
-        return ResponseMessage.builder().message("success").success(true).data(savedRecipes).build();
+        return ResponseMessage.builder().text("success").status(true).data(savedRecipes).build();
     }
 
 
@@ -48,9 +49,9 @@ public class RecipeService_A {
     public ResponseMessage recipeIngrident(Integer id) {
         List<Ingredient> ingredients =  ingridentsRepository.findByRecipe_Id(id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
         if (ingredients.isEmpty()) {
-            return ResponseMessage.builder().message("Ingredients do not found").success(false).data(ResponseEntity.notFound()).build();
+            return ResponseMessage.builder().text("Ingredients do not found").status(false).data(ResponseEntity.notFound()).build();
         }
-        return ResponseMessage.builder().message("success").success(true).data(ingredients).build();
+        return ResponseMessage.builder().text("success").status(true).data(ingredients).build();
     }
 
 
@@ -58,7 +59,7 @@ public class RecipeService_A {
     public ResponseMessage ingridentShare( Integer recipe_id) {
         Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
         RecipeDTO_A build = RecipeDTO_A.builder().link(recipe.getLink()).build();
-        return ResponseMessage.builder().message("success").success(true).data(build).build();
+        return ResponseMessage.builder().text("success").status(true).data(build).build();
     }
 
 
@@ -66,7 +67,7 @@ public class RecipeService_A {
     public ResponseMessage ingridentMoreRate(Integer recipe_id) {
         Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
         RecipeDTO_A build = RecipeDTO_A.builder().averageReiting(recipe.getAverageRating()).build();
-        return ResponseMessage.builder().message("success").success(true).data(build).build();
+        return ResponseMessage.builder().text("success").status(true).data(build).build();
     }
 
 
@@ -74,7 +75,7 @@ public class RecipeService_A {
     public ResponseMessage ingridentMoreReviews(Integer recipe_id) {
         Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
         RecipeDTO_A build = RecipeDTO_A.builder().views(recipe.getViews()).build();
-        return ResponseMessage.builder().message("success").success(true).data(build).build();
+        return ResponseMessage.builder().text("success").status(true).data(build).build();
     }
 
 
