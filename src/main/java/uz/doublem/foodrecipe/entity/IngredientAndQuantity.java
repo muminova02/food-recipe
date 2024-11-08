@@ -1,10 +1,10 @@
 package uz.doublem.foodrecipe.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
 
 @Getter
 @Setter
@@ -12,20 +12,18 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Step {
+public class IngredientAndQuantity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    private String description;
+    @ManyToOne
+    private Ingredient ingredient;
+
+    private String quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id")
     @ToString.Exclude
     @JsonIgnore
     private Recipe recipe;
-
-    private Integer step_number ;
-
 }
