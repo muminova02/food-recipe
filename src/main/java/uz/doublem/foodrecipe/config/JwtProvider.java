@@ -24,7 +24,7 @@ public class JwtProvider{
         return   Jwts.builder().setIssuedAt(new Date())
                 .setSubject(userDetails.getUsername())
                 .setExpiration(date)
-                .signWith(signKey(), SignatureAlgorithm.ES256)
+                .signWith(signKey(), SignatureAlgorithm.HS256)
                 .compact();
 
     }
@@ -38,7 +38,7 @@ public class JwtProvider{
         try {
             subject = Jwts.parser()
                     .setSigningKey(signKey())
-                    .parseClaimsJwt(auth)
+                    .parseClaimsJws(auth)
                     .getBody()
                     .getSubject()
                     .toString();

@@ -25,13 +25,13 @@ public class SmsService {
         Authenticator auth = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("your@gmail.com", "yourPassword");
+                return new PasswordAuthentication("@gmail.com", "");
             }
         };
         Session session = Session.getInstance(properties, auth);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("your@gmail.com"));
+        message.setFrom(new InternetAddress("@gmail.com"));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
         message.setSubject(text);
 
@@ -45,12 +45,13 @@ public class SmsService {
         HashSet<Integer> set = new HashSet<>();
         Random random = new Random();
         int n = 0;
-        while (set.size() > 6){
-            n = random.nextInt();
+        while (set.size() < 6){
+            n = random.nextInt(10);
             set.add(n);
         }
         StringBuilder sb = new StringBuilder();
         set.forEach(sb::append);
         return sb.toString();
     }
+
 }
