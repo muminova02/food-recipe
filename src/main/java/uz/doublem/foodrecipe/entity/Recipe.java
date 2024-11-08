@@ -38,7 +38,7 @@ public class Recipe {
     private String link;
 
     @Column(name = "average_rating")
-    private Integer averageRating;
+    private Double averageRating;
 
     private String description;
 
@@ -50,6 +50,9 @@ public class Recipe {
 
     @Column(name = "video_url")
     private String videoUrl;
+
+    @Column(name = "views_count")
+    private Integer viewsCount;
 
     @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
     @JsonIgnore
