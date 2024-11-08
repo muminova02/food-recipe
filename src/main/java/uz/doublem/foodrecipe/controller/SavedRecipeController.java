@@ -27,6 +27,10 @@ public class SavedRecipeController {
     public List<SavedRecipes> getAllRecipesById(Integer ownerId) {
         return savedRecipeService.getSavedReciepeById(ownerId);
     }
+    @DeleteMapping
+    public void deleteById(SavedRecipes id) {
+        savedRecipeService.deleteRecipe(id);
+    }
 
 
 

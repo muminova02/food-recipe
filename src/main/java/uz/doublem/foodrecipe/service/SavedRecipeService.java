@@ -24,9 +24,10 @@ public class SavedRecipeService {
         return savedReciepe.save(recipe);
     }
 
-    public List<SavedRecipes> getAllRecipes() {
-        return savedReciepe.findAll();
+    public void deleteRecipe(SavedRecipes recipe) {
+        savedReciepe.delete(recipe);
     }
+
 
     public List<SavedRecipes> getSavedReciepeById(Integer id) {
         return Objects.requireNonNull(savedReciepe.findAllByOwner_Id(id));
