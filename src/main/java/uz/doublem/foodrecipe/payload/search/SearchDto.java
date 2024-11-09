@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SearchDto {
+    private String title;
     private String time;
     private Integer rate;
     private String category;

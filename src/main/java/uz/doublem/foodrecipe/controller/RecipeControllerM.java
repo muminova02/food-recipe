@@ -68,8 +68,7 @@ public class RecipeControllerM {
                         )))
         @RequestPart(name = "file", required = false) List<MultipartFile> attachments){
 //        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2L);
-
+        Optional<User> byId = userRepository.findById(2);
         ResponseMessage res = recipeServiceM.addRecipe(json,attachments,byId.get());
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
 
