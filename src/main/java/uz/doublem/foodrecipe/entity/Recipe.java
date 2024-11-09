@@ -38,7 +38,7 @@ public class Recipe {
     private String link;
 
     @Column(name = "average_rating")
-    private Integer averageRating;
+    private Double averageRating;
 
     private String description;
 
