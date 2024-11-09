@@ -46,7 +46,8 @@ public class AttachmentController
                             )))
             @RequestPart(name = "file", required = false) List<MultipartFile> photo)
     {
-        return ResponseEntity.status(201).body(attachmentService.upload(photo));
+        ResponseMessage res = attachmentService.upload(photo);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 
     @GetMapping("/name/{name}")
