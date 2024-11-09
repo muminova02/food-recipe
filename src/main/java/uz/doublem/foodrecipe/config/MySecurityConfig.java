@@ -40,7 +40,7 @@ private UserRepository userRepository;
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
-                       .requestMatchers("")
+                       .requestMatchers("/api/")
                        .permitAll()
                        .requestMatchers(HttpMethod.POST)
                        .hasRole("USER")
