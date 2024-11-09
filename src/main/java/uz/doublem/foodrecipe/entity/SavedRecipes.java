@@ -20,5 +20,4 @@ public class SavedRecipes {
     private User owner;
     @ManyToOne
     private Recipe recipe;
-
 }

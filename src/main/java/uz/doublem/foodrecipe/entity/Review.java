@@ -54,8 +54,8 @@ public class Review {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Timestamp createdAt;
-
-
-
+    public void test(){
+        System.out.println("asf");
+    }
 
 }
