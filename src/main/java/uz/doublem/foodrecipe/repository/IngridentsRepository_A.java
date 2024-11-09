@@ -14,4 +14,6 @@ public interface IngridentsRepository_A extends JpaRepository<IngredientAndQuant
     Optional<List<Ingredient>> findByRecipeId(int id);*/
 
     Optional<List<IngredientAndQuantity>> findByRecipe_Id(Integer id);
+
+    Optional<IngredientAndQuantity> findByIngredient_Id(Integer id);
 }

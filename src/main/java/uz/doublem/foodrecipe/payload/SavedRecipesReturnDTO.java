@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDtoReview {
+public class SavedRecipesReturnDTO {
+    private String title;
+    private String author;
+    private Double averageRating;
+    private String cookingTime;
 
-
-            private String fullname;
-            private String imageurl;
-
-
-
-        }
+}

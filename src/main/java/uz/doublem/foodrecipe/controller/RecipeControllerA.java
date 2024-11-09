@@ -39,7 +39,7 @@ public class RecipeControllerA {
 
     @GetMapping("/ingrident/{id}")
     public ResponseEntity<?> recipeIngrident(@PathVariable Integer id) {
-        ResponseMessage responseMessage = service.recipeIngrident(id);
+        ResponseMessage responseMessage = service.recipeIngredient(id);
         return ResponseEntity.status(200).body(responseMessage);
     }
 

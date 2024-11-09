@@ -7,6 +7,6 @@ import uz.doublem.foodrecipe.entity.View;
 
 import java.util.List;
 @Builder
-public record RecipeDTO_A(String link, Integer averageReiting, List<View> views) {
+public record RecipeDTO_A(String link, Double averageReiting, List<View> views) {
 
 }

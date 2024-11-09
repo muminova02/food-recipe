@@ -9,12 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDtoReview {
+public class IngredientReturnDTO{
 
-
-            private String fullname;
-            private String imageurl;
-
-
-
-        }
+       private String quantity;
+       private String icon;
+       private String name;
+}

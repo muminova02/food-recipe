@@ -4,16 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uz.doublem.foodrecipe.entity.*;
-import uz.doublem.foodrecipe.payload.RecipeDTO_A;
-import uz.doublem.foodrecipe.payload.ResponseMessage;
-import uz.doublem.foodrecipe.payload.UserDTO;
-import uz.doublem.foodrecipe.repository.IngridentsRepository_A;
-import uz.doublem.foodrecipe.repository.RecipeRepository_A;
-import uz.doublem.foodrecipe.repository.SavedRecipeRepository_A;
-import uz.doublem.foodrecipe.repository.UserRepository;
+import uz.doublem.foodrecipe.payload.*;
+import uz.doublem.foodrecipe.repository.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class RecipeService_A {
@@ -22,6 +18,7 @@ public class RecipeService_A {
     final SavedRecipeRepository_A savedRecipeRepository;
     final IngridentsRepository_A ingridentsRepository;
     final RecipeRepository_A recipeRepository;
+    final IngredientRepository ingredientRepository;
 
 
 
@@ -34,22 +31,72 @@ public class RecipeService_A {
                 .orElse(Collections.emptyList());
 
         if (savedRecipes.isEmpty()) {
-            return ResponseMessage.builder().text("Recipes do not found").status(false).data(ResponseEntity.notFound()).build();
+            return ResponseMessage.builder()
+                    .text("Recipes not found")
+                    .status(false)
+                    .data(ResponseEntity.notFound().build())
+                    .build();
         }
 
-        return ResponseMessage.builder().text("success").status(true).data(savedRecipes).build();
+        List<SavedRecipesReturnDTO> savedRecipesReturnDTOS = savedRecipes.stream()
+                .map(this::convertToSavedRecipesReturnDTO)
+                .collect(Collectors.toList());
+
+        return ResponseMessage.builder()
+                .text("success")
+                .status(true)
+                .data(savedRecipesReturnDTOS)
+                .build();
+    }
+
+    private SavedRecipesReturnDTO convertToSavedRecipesReturnDTO(SavedRecipes savedRecipe) {
+        Recipe recipe = savedRecipe.getRecipe();
+        User author = recipe.getAuthor();
+
+        return SavedRecipesReturnDTO.builder()
+                .title(recipe.getTitle())
+                .author(author.getName())
+                .cookingTime(recipe.getCookingTime())
+                .averageRating(recipe.getAverageRating())
+                .build();
     }
 
 
 
+    public ResponseMessage recipeIngredient(Integer id) {
+        List<IngredientAndQuantity> ingredients = ingridentsRepository.findByRecipe_Id(id)
+                .orElseThrow(() -> new RuntimeException("Recipe id not found"));
 
-    public ResponseMessage recipeIngrident(Integer id) {
-        List<IngredientAndQuantity> ingredients =  ingridentsRepository.findByRecipe_Id(id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
-        if (ingredients.isEmpty()) {
-            return ResponseMessage.builder().text("Ingredients do not found").status(false).data(ResponseEntity.notFound()).build();
+        List<IngredientReturnDTO> ingredientReturnDTOS = ingredients.stream()
+                .map(ingredientAndQuantity -> ingredientRepository.findById(ingredientAndQuantity.getIngredient().getId())
+                        .map(ingredient -> {
+                            IngredientReturnDTO dto = new IngredientReturnDTO();
+                            dto.setQuantity(ingredientAndQuantity.getQuantity());
+                            dto.setName(ingredient.getName());
+                            dto.setIcon(ingredient.getIcon());
+                            return dto;
+                        })
+                        .orElse(null)
+                )
+                .filter(Objects::nonNull)  // Filter out nulls for missing ingredients
+                .collect(Collectors.toList());
+
+        if (ingredientReturnDTOS.isEmpty()) {
+            return ResponseMessage.builder()
+                    .text("Ingredients not found")
+                    .status(false)
+                    .data(ResponseEntity.notFound().build())
+                    .build();
         }
-        return ResponseMessage.builder().text("success").status(true).data(ingredients).build();
+
+        return ResponseMessage.builder()
+                .text("success")
+                .status(true)
+                .data(ingredientReturnDTOS)
+                .build();
     }
+
+
 
 
 

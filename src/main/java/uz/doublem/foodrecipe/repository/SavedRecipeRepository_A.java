@@ -12,4 +12,8 @@ public interface SavedRecipeRepository_A extends JpaRepository<SavedRecipes, Int
 
     @Query(value = "select t from SavedRecipes t where t.owner=?1")
     Optional<List<SavedRecipes>> findByUserId(Integer id);
+
+    Optional<List<SavedRecipes>> findByRecipe_Id(Integer id);
+
+    Long countByRecipe_Id(Integer id);
 }
