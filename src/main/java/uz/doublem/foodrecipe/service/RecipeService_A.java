@@ -3,9 +3,6 @@ package uz.doublem.foodrecipe.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.RecipeDTO_A;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
@@ -47,7 +44,7 @@ public class RecipeService_A {
 
 
     public ResponseMessage recipeIngrident(Integer id) {
-        List<Ingredient> ingredients =  ingridentsRepository.findByRecipe_Id(id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
+        List<IngredientAndQuantity> ingredients =  ingridentsRepository.findByRecipe_Id(id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
         if (ingredients.isEmpty()) {
             return ResponseMessage.builder().text("Ingredients do not found").status(false).data(ResponseEntity.notFound()).build();
         }
