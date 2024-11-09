@@ -51,6 +51,9 @@ public class Recipe {
     @Column(name = "video_url")
     private String videoUrl;
 
+    @Column(name = "views_count")
+    private Integer viewsCount;
+
     @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<View> views;
