@@ -40,7 +40,7 @@ private UserRepository userRepository;
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
-                       .requestMatchers("/api/")
+                       .requestMatchers("/auth/**","/swagger-ui/**","/v3/api-docs/**","/api/**")
                        .permitAll()
                        .requestMatchers(HttpMethod.POST)
                        .hasRole("USER")
