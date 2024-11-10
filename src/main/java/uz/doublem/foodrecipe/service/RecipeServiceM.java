@@ -55,8 +55,13 @@ public class RecipeServiceM {
                         .author(currentUser)
                         .averageRating(1.0)
                         .cookingTime(recipeDTO.getCookingTime())
+                        .viewsCount(0)
                         .build();
-
+                String title = recipe.getTitle();
+                Integer id = recipe.getId();
+                String fullTitle = title + "_&" + id;
+                String link = "http://localhost:8080/api/recipe/link/" + fullTitle;
+                recipe.setLink(link);
                 Optional<Category> optionCategory = categoryRepository.findById(recipeDTO.getCategory_id());
                 if (optionCategory.isEmpty()) {
                     return ResponseMessage.builder()
@@ -66,8 +71,9 @@ public class RecipeServiceM {
                 }
                 recipe.setCategory(optionCategory.get());
                 recipeRepositoryM.save(recipe);
-
+                response.setText("Recipe SAVED IN STEP 1");
                 addAttachmentsToRecipe(attachments, recipe);
+                response.setText(response.getText() + ", Step 2 >> Attachment VIDEO AND Audio added");
 
                 if (!recipeDTO.getIngredientList().isEmpty()) {
                     if (saveIngredientsList(recipeDTO.getIngredientList(), recipe)) {
