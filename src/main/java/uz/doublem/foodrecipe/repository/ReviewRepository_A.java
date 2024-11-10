@@ -11,4 +11,7 @@ public interface ReviewRepository_A extends JpaRepository<Review, Integer> {
 
 
     Page<Review> findAllByRecipe_Id(Integer id, Pageable pageable);
+
+
+
 }

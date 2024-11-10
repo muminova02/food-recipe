@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface RecipeRepository_A extends JpaRepository<Recipe, Integer> {
 
 
+
+
 }

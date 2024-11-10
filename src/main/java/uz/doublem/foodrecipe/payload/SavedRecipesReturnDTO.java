@@ -15,4 +15,6 @@ public class SavedRecipesReturnDTO {
     private Double averageRating;
     private String cookingTime;
 
+
+
 }

@@ -9,4 +9,7 @@ import java.util.List;
 @Builder
 public record RecipeDTO_A(String link, Double averageReiting, List<View> views) {
 
+
+
+
 }

@@ -41,6 +41,7 @@ public class RecipeControllerA {
     public ResponseEntity<?> recipeIngrident(@PathVariable Integer id) {
         ResponseMessage responseMessage = service.recipeIngredient(id);
         return ResponseEntity.status(200).body(responseMessage);
+
     }
 
 
