@@ -14,4 +14,6 @@ public class SavedResponseDto {
     private String time;
     private Double averageRating;
     private String imageUrl;
+
+
 }

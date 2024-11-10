@@ -19,7 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.concurrent.ExecutionException;
 
 @Configuration
 @RequiredArgsConstructor
@@ -38,17 +37,9 @@ public class MyFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
        try {
 
-
-        if (authorization.startsWith("Basic ")){
-            authorization.substring(6);
-            byte[] decode = Base64.getDecoder().decode(authorization);
-            String auth = new String(decode);
-            String[] split = auth.split(":");
-            setAuthenticationToContext(split[0],split[1]);
-        }
 if (authorization.startsWith("Bearer ")){
-    authorization.substring(7);
-    String email =jwtProvider.getSubject(authorization);
+    String substring = authorization.substring(7);
+    String email =jwtProvider.getSubject(substring);
     System.out.println(email);
     setAuthenticationToContext(email);
 }}

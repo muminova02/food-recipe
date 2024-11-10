@@ -53,7 +53,7 @@ public class RecipeServiceM {
                         .title(recipeDTO.getTitle())
                         .description(recipeDTO.getDescription())
                         .author(currentUser)
-                        .averageRating(1.0)
+                        .averageRating(1.)
                         .cookingTime(recipeDTO.getCookingTime())
                         .viewsCount(0)
                         .build();

@@ -2,7 +2,10 @@ package uz.doublem.foodrecipe.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,20 +32,17 @@ public class User implements UserDetails {
     private String password_hash;
     private Integer following_count =0;
     private Integer followers_count =0;
-    private String code;
+    private String verificationCode;
+    private String resetPasswordCode;
     private Boolean verified = false;
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Attachment attachment;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
     private List<User> followers;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
     private Location location;
-    private LocalDateTime generetedCodeTime;
+    private LocalDateTime verificationCodeGeneratedTime;
+    private LocalDateTime resetPasswordCodeGeneratedTime;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -58,4 +58,5 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
 }

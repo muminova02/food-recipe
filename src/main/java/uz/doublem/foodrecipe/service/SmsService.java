@@ -16,7 +16,7 @@ public class SmsService {
 
     @SneakyThrows
     public void sendSmsToUser(String email, String text) {
-        String subject = String.format("<h1>this is code to confirm your account<a href=https://kun.uz> %s<a/>, please do not share this code with anyone</h1>", text);
+        String subject = String.format("<h1>this is code to confirm your account %s <a/>, please do not share this code with anyone</h1>", text);
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "465");
@@ -25,13 +25,13 @@ public class SmsService {
         Authenticator auth = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("your@gmail.com", "yourPassword");
+                return new PasswordAuthentication("soliqsoliqsawka34@gmail.com", "mapduxpkguuetknz");
             }
         };
         Session session = Session.getInstance(properties, auth);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("your@gmail.com"));
+        message.setFrom(new InternetAddress("soliqsoliqsawka34@gmail.com"));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
         message.setSubject(text);
 
@@ -45,12 +45,13 @@ public class SmsService {
         HashSet<Integer> set = new HashSet<>();
         Random random = new Random();
         int n = 0;
-        while (set.size() > 6){
-            n = random.nextInt();
+        while (set.size() < 6){
+            n = random.nextInt(10);
             set.add(n);
         }
         StringBuilder sb = new StringBuilder();
         set.forEach(sb::append);
         return sb.toString();
     }
+
 }

@@ -14,19 +14,17 @@ import java.util.Date;
 @Component
 public class JwtProvider{
 
-
-    @Value("${my_token.key}")
-    String key;
+   @Value("${my_token.key}")
+   private String key;
     @Value("${my_token.expire_time}")
-    Long expireTime;
-
+   private Long expireTime;
 
     public String generateToken(UserDetails userDetails){
         Date date = new Date(System.currentTimeMillis() + expireTime);
         return   Jwts.builder().setIssuedAt(new Date())
                 .setSubject(userDetails.getUsername())
                 .setExpiration(date)
-                .signWith(signKey(), SignatureAlgorithm.ES256)
+                .signWith(signKey(), SignatureAlgorithm.HS256)
                 .compact();
 
     }
@@ -40,7 +38,7 @@ public class JwtProvider{
         try {
             subject = Jwts.parser()
                     .setSigningKey(signKey())
-                    .parseClaimsJwt(auth)
+                    .parseClaimsJws(auth)
                     .getBody()
                     .getSubject()
                     .toString();
