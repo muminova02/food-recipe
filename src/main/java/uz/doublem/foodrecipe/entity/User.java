@@ -2,7 +2,10 @@ package uz.doublem.foodrecipe.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,13 +38,8 @@ public class User implements UserDetails {
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Attachment attachment;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
     private List<User> followers;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
     private Location location;
     private LocalDateTime verificationCodeGeneratedTime;
     private LocalDateTime resetPasswordCodeGeneratedTime;

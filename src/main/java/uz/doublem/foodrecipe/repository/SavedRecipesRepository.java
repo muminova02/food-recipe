@@ -16,4 +16,6 @@ public interface SavedRecipesRepository extends JpaRepository<SavedRecipes, Long
         Page<SavedRecipes> findAllByOwner_Id(Integer owner_id, Pageable pageable);
 
         Optional<SavedRecipes> findByOwnerIdAndRecipeId(Integer owner_id, Integer recipe_id);
+
+
 }
