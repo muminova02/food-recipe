@@ -25,13 +25,13 @@ public class SmsService {
         Authenticator auth = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("@gmail.com", "");
+                return new PasswordAuthentication("soliqsoliqsawka34@gmail.com", "mapduxpkguuetknz");
             }
         };
         Session session = Session.getInstance(properties, auth);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("@gmail.com"));
+        message.setFrom(new InternetAddress("soliqsoliqsawka34@gmail.com"));
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
         message.setSubject(text);
 

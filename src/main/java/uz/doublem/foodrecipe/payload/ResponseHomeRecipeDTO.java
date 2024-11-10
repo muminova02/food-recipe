@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.doublem.foodrecipe.entity.Recipe;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor

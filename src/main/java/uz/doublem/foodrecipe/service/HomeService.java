@@ -42,4 +42,17 @@ public class HomeService {
                 .build()).toList();
         return ResponseMessage.builder().text("recipes by category id").status(true).data(list).build();
     }
+
+    public ResponseMessage getNewRecipes(Integer size,Integer page){
+        PageRequest pageRequest = PageRequest.of(page,size);
+        Page<Recipe> newRecipes = reciepesRepository.findByOrderByCreatedAtAscAverageRatingDesc(pageRequest);
+        List<ResponseHomeRecipeDTO> list = newRecipes.stream().map(r -> ResponseHomeRecipeDTO.builder().id(r.getId())
+                .title(r.getTitle())
+                .imgUrl(r.getImageUrl())
+                .cookingTime(r.getCookingTime())
+                .averageRating(r.getAverageRating())
+                .build()).toList();
+        return ResponseMessage.builder().data(list).status(true).text("new recipes ordered").build();
+    }
+
 }
