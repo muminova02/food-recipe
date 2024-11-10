@@ -1,7 +1,6 @@
 package uz.doublem.foodrecipe.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -40,6 +39,7 @@ private UserRepository userRepository;
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
+
                        .requestMatchers("/auth/**","/swagger-ui/**","/v3/api-docs/**","/api/**")
                        .permitAll()
                        .requestMatchers(HttpMethod.POST)

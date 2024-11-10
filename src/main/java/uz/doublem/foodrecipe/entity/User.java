@@ -32,7 +32,8 @@ public class User implements UserDetails {
     private String password_hash;
     private Integer following_count =0;
     private Integer followers_count =0;
-    private String code;
+    private String verificationCode;
+    private String resetPasswordCode;
     private Boolean verified = false;
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Attachment attachment;
@@ -40,7 +41,8 @@ public class User implements UserDetails {
     private List<User> followers;
     @ManyToOne(fetch = FetchType.LAZY)
     private Location location;
-    private LocalDateTime generetedCodeTime;
+    private LocalDateTime verificationCodeGeneratedTime;
+    private LocalDateTime resetPasswordCodeGeneratedTime;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -56,4 +58,5 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
 }
