@@ -2,6 +2,7 @@ package uz.doublem.foodrecipe.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
@@ -21,10 +22,9 @@ public class SavedRecipeController {
 
     @GetMapping
     public ResponseEntity<?> getSavedRecipes(@RequestParam Integer size, @RequestParam Integer page ) {
-        // User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
        ResponseMessage res= savedRecipeService.getSavedRecipes(byId.get(),size, page);
-
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
     @PostMapping
