@@ -12,6 +12,8 @@ import uz.doublem.foodrecipe.payload.NotificationDto;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.repository.NotificationRepository;
 import uz.doublem.foodrecipe.repository.UserRepository;
+
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +59,16 @@ public class NotificationService {
                 }
         ).toList();
     }
+
+    public void createNotification(Recipe recipe,User user) {
+        Notification notification = new Notification();
+        notification.setRecipe(recipe);
+        notification.setUser(user);
+        notification.setHasRead(false);
+        notification.setText(recipe.getDescription());
+        notificationRepository.save(notification);
+    }
+
 
 
 }
