@@ -62,7 +62,7 @@ public class ReviewService_A {
                     User user = review.getUser();
                     ReviewDto_A dto = new ReviewDto_A();
                     dto.setSaved(countSaved);  // casting long to int for countSaved
-                    dto.setAttachment(new UserDtoReview(user.getName(), user.getAttachment().getUrl()));
+                    dto.setAttachment(new UserDtoReview(user.getName(), user.getImageUrl()));
                     dto.setComment(review.getComment());
                     dto.setCreated_at(review.getCreatedAt().toString());
                     dto.setLikes_count(review.getLikeCount());

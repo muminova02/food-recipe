@@ -11,7 +11,7 @@ import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.service.ReviewService_A;
 
 @RestController
-@RequestMapping("/reviewA")
+@RequestMapping("/api/reviewA")
 @RequiredArgsConstructor
 public class ReviewController_A {
     final ReviewService_A service;

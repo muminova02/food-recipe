@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.*;
+import uz.doublem.foodrecipe.util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,7 +69,9 @@ public class RecipeService_A {
     public ResponseMessage recipeIngredient(Integer id) {
         List<IngredientAndQuantity> ingredients = ingridentsRepository.findByRecipe_Id(id)
                 .orElseThrow(() -> new RuntimeException("Recipe id not found"));
-
+        if (ingredients.isEmpty()) {
+            return Util.getResponseMes(false,"recipe has not Ingredients",id);
+        }
         List<IngredientReturnDTO> ingredientReturnDTOS = ingredients.stream()
                 .map(ingredientAndQuantity -> ingredientRepository.findById(ingredientAndQuantity.getIngredient().getId())
                         .map(ingredient -> {

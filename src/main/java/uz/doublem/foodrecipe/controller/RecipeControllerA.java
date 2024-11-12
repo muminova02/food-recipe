@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/recipeA")
+@RequestMapping("/api/recipeA")
 public class RecipeControllerA {
 
     final RecipeService_A service;
