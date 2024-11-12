@@ -12,7 +12,7 @@ import java.util.List;
 public class HomeDTO {
     String name;
     String email;
-    Attachment attachment;
+    String attachment;
     List<Category> categories;
 
 }

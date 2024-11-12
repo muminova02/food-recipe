@@ -1,6 +1,7 @@
 package uz.doublem.foodrecipe.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -32,6 +33,7 @@ private UserRepository userRepository;
             return new BCryptPasswordEncoder();
         }
 
+    @Bean
     public SecurityFilterChain mySecurity(HttpSecurity http) throws Exception {
 
                http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)

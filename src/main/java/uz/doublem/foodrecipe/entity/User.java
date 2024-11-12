@@ -35,8 +35,7 @@ public class User implements UserDetails {
     private String verificationCode;
     private String resetPasswordCode;
     private Boolean verified = false;
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Attachment attachment;
+    private String imageUrl;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<User> followers;
     @ManyToOne(fetch = FetchType.LAZY)

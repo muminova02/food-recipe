@@ -22,11 +22,10 @@ public class HomeService {
     private final ReciepesRepository reciepesRepository;
     public ResponseMessage homePage(User user){
         String name = user.getName();
-        Attachment attachment = user.getAttachment();
         HomeDTO homeDTO = new HomeDTO();
         homeDTO.setName(name);
         homeDTO.setEmail(user.getEmail());
-        homeDTO.setAttachment(attachment);
+        homeDTO.setAttachment(user.getImageUrl());
         homeDTO.setCategories(categoryRepository.findAll());
         return ResponseMessage.builder().data(homeDTO).status(true).build();
     }

@@ -2,6 +2,7 @@ package uz.doublem.foodrecipe.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import uz.doublem.foodrecipe.payload.search.SearchDto;
 import uz.doublem.foodrecipe.repository.UserRepository;
 import uz.doublem.foodrecipe.service.SearchService;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -37,11 +39,13 @@ public class SearchController {
 
 
     @GetMapping("/result/{id}")
-    public RedirectView getRecipeInSearchResult(@PathVariable Integer id) {
+    public ResponseEntity<Void> getRecipeInSearchResult(@PathVariable Integer id) {
 //        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
         searchService.createRecentSearch(id,byId.get());
-        return new RedirectView("api/recipe/"+id);
+
+        URI redirectUri = URI.create("/api/recipeM/" + id);
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }
 
 }
