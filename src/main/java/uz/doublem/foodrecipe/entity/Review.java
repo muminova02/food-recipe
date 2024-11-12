@@ -27,7 +27,7 @@ public class Review {
     @Column(nullable = false)
     private String comment;
 
-    // User who wrote the review; not serialized to JSON for privacy
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
