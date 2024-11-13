@@ -172,4 +172,9 @@ public class RecipeControllerM {
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateRecipe(@PathVariable Integer id, @RequestBody){
+        return null;
+    }
+
 }
