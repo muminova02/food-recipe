@@ -52,7 +52,7 @@ public class Recipe {
     private String videoUrl;
 
     @Column(name = "views_count")
-    private Integer viewsCount;
+    private Long viewsCount;
 
     @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
     @JsonIgnore

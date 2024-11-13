@@ -19,6 +19,6 @@ public class RecipeResponceDTO {
     private String authorLocation;
     private String authorImageUrl;
     private Double averageRating;
-    private Integer viewCount;
+    private Long viewCount;
 
 }
