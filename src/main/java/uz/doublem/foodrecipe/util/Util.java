@@ -6,8 +6,12 @@ import uz.doublem.foodrecipe.payload.ResponseMessage;
 
 import java.util.Base64;
 
-public class Util {
-       public static User getCurrentUser(){
+public interface Util {
+        static User getCurrentUser(){
            return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       }
+
+       static ResponseMessage getResponseMes(boolean b, String message, Object obj){
+                return ResponseMessage.builder().status(b).data(obj).text(message).build();
        }
 }
