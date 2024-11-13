@@ -33,6 +33,7 @@ private UserRepository userRepository;
             return new BCryptPasswordEncoder();
         }
 
+    @Bean
     public SecurityFilterChain mySecurity(HttpSecurity http) throws Exception {
 
                http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
@@ -40,8 +41,8 @@ private UserRepository userRepository;
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
-                       .requestMatchers("/auth/**","/swagger-ui/**","/v3/api-docs/**","/api/**")
 
+                       .requestMatchers("/auth/**","/swagger-ui/**","/v3/api-docs/**","/api/**")
                        .permitAll()
                        .requestMatchers(HttpMethod.POST)
                        .hasRole("USER")
