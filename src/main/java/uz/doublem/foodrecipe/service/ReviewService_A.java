@@ -150,23 +150,55 @@ public class ReviewService_A {
         if (byId.isEmpty()) {
             return Util.getResponseMes(false,"review not found with this id: ",reviewLikeDtoAdd.getReviewId());
         }
-        Optional<LikeReview> optionLikeReview = likeReviewRepository.findByReview_IdAndUser_Id(reviewLikeDtoAdd.getReviewId(), user.getId());
-        if (optionLikeReview.isEmpty()) {
-            LikeReview likeReview = new LikeReview();
-            likeReview.setReview(byId.get());
-            likeReview.setUser(user);
-            likeReview.setIsLike(reviewLikeDtoAdd.getHasLiked());
-            likeReviewRepository.save(likeReview);
-            return Util.getResponseMes(true,"create and reacted to Review", reviewLikeDtoAdd);
-        }
-        LikeReview likeReview = optionLikeReview.get();
-        if ((likeReview.getIsLike()&&reviewLikeDtoAdd.getHasLiked())||(!likeReview.getIsLike()&&!reviewLikeDtoAdd.getHasLiked())) {
+        Review review = byId.get();
+        Boolean hasLikedNew = reviewLikeDtoAdd.getHasLiked();
+        LikeReview likeReview = likeReviewRepository.findByReview_IdAndUser_Id(reviewLikeDtoAdd.getReviewId(), user.getId())
+                .orElseGet(() -> createNewLikeReview(review, user, hasLikedNew));
+        Boolean isLikeOld = likeReview.getIsLike();
+        if (hasLikedNew.equals(isLikeOld)) {
             deleteLikeReview(likeReview.getId());
-            return Util.getResponseMes(true,"set noreacted successfully , and delete review like", reviewLikeDtoAdd);
+            changeCountReaction(review, hasLikedNew, isLikeOld);
+            return Util.getResponseMes(true, "Removed reaction successfully, deleted review like", reviewLikeDtoAdd);
+        } else {
+            likeReview.setIsLike(hasLikedNew);
+            likeReviewRepository.save(likeReview);
+            changeCountReaction(review, hasLikedNew, isLikeOld);
+            return Util.getResponseMes(true, "Changed reaction for review without creating new LikeReview", reviewLikeDtoAdd);
         }
-        likeReview.setIsLike(reviewLikeDtoAdd.getHasLiked());
+    }
+    private LikeReview createNewLikeReview(Review review, User user, Boolean hasLikedNew) {
+        LikeReview likeReview = new LikeReview();
+        likeReview.setReview(review);
+        likeReview.setUser(user);
+        likeReview.setIsLike(hasLikedNew);
         likeReviewRepository.save(likeReview);
-        return Util.getResponseMes(true,"not create new LikeReview, but change reaction for Review", reviewLikeDtoAdd);
+        changeCountReaction(review, hasLikedNew, null);
+        return likeReview;
+    }
+
+    private void changeCountReaction(Review review, Boolean hasLikedNew, Boolean isLikedOld) {
+            if (isLikedOld == null) {
+                if (hasLikedNew) {
+                    review.setLikeCount(review.getLikeCount() + 1);
+                } else {
+                    review.setDislikeCount(review.getDislikeCount() + 1);
+                }
+            } else if (hasLikedNew.equals(isLikedOld)) {
+                if (hasLikedNew) {
+                    review.setLikeCount(review.getLikeCount() - 1);
+                } else {
+                    review.setDislikeCount(review.getDislikeCount() - 1);
+                }
+            } else {
+                if (hasLikedNew) {
+                    review.setLikeCount(review.getLikeCount() + 1);
+                    review.setDislikeCount(review.getDislikeCount() - 1);
+                } else {
+                    review.setLikeCount(review.getLikeCount() - 1);
+                    review.setDislikeCount(review.getDislikeCount() + 1);
+                }
+            }
+            reviewRepository.save(review);
     }
 
     @Transactional

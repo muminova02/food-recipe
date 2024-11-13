@@ -155,7 +155,9 @@ public class RecipeControllerM {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRecipe(@PathVariable Integer id){
-        ResponseMessage res = recipeServiceM.getRecipe(id);
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.getRecipe(id,byId.get());
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 

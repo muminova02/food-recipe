@@ -2,26 +2,19 @@ package uz.doublem.foodrecipe.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.*;
-import uz.doublem.foodrecipe.util.Util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import uz.doublem.foodrecipe.util.Util.*;
 
-import static java.util.Collections.*;
 import static uz.doublem.foodrecipe.util.Util.getResponseMes;
 
 @Service
@@ -94,7 +87,7 @@ public class RecipeServiceM {
             recipe.setAuthor(currentUser);
             recipe.setAverageRating(1.);
             recipe.setCookingTime(recipeDTO.getCookingTime());
-            recipe.setViewsCount(0);
+            recipe.setViewsCount(0L);
             Optional<Category> optionCategory = categoryRepository.findById(recipeDTO.getCategory_id());
             if (optionCategory.isEmpty()) {
                 return false;
@@ -276,7 +269,7 @@ public class RecipeServiceM {
         return getResponseMes(false,"recipe not added",recipeDTOaddOnly);
     }
 
-    public ResponseMessage getRecipe(Integer id) {
+    public ResponseMessage getRecipe(Integer id, User user) {
         Optional<Recipe> byId = recipeRepositoryM.findById(id);
         if (byId.isEmpty()) {
             return getResponseMes(false,"recipe not found",id);
@@ -294,6 +287,11 @@ public class RecipeServiceM {
                     .authorLocation(recipe.getAuthor().getLocation()!=null?recipe.getAuthor().getLocation().getCountry():"Location is not yet")
                     .authorImageUrl(recipe.getAuthor().getImageUrl()!=null?recipe.getAuthor().getImageUrl():"defoultpath or we deal set null, and front check this")
                     .build();
+        incrementCountView(recipe.getId(),user);
         return getResponseMes(true,"get recipe successfully",build);
+    }
+
+    private void incrementCountView(Integer id, User user) {
+
     }
 }
