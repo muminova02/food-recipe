@@ -67,6 +67,7 @@ public class ReviewService_A {
                 .map(review -> {
                     User user = review.getUser();
                     ReviewResponceDto dto = new ReviewResponceDto();
+                    dto.setReviewId(review.getId());
                     dto.setAttachment(new UserDtoReview(user.getName(), user.getImageUrl()));
                     dto.setComment(review.getComment());
                     dto.setCreated_at(review.getCreatedAt().toString());
@@ -81,20 +82,30 @@ public class ReviewService_A {
 
     }
 
-   public void deleteComment (Integer reviewId, User user) {
+   public ResponseMessage deleteComment (Integer reviewId, User user) {
        Optional<Review> byId = reviewRepository.findById(reviewId);
        if (byId.isPresent()) {
            Review review = byId.get();
+           if (review.getComment()==null) {
+              return Util.getResponseMes(false,"comment not found in review, return this id ",reviewId);
+           }
            User user1 = review.getUser();
            User author = review.getRecipe().getAuthor();
            if (Objects.equals(user.getId(), user1.getId() )
                    || Objects.equals(user.getId(), author.getId())
                    || user.getId()==1
            ){
-               reviewRepository.delete(review);
+                  if (review.getRating()==null){
+                   reviewRepository.delete(review);
+                   return Util.getResponseMes(true,"delete review success",reviewId);
+                  }else {
+                      review.setRating(null);
+                      reviewRepository.save(review);
+                      return Util.getResponseMes(true,"delete only comment success",reviewId);
+                  }
            }
        }
-
+       return Util.getResponseMes(false,"review not found with this id",reviewId);
    }
 
     public ResponseMessage addReviewForRecipe(ReviewDto reviewDto, User user) {
@@ -109,9 +120,9 @@ public class ReviewService_A {
             review = optionReview.get();
             if (reviewDto.getRating() != null) {
                 review.setRating(reviewDto.getRating());
+                reviewRepository.save(review);
                 fixedAverageRateForRecipe(recipeId);
             }
-            reviewRepository.save(review);
             return Util.getResponseMes(true,"Rated to Recipe, and not create Review becouse Review Already created",recipeId);
         }
         if (reviewDto.getRating() != null) {
@@ -165,11 +176,24 @@ public class ReviewService_A {
         Optional<Review> byId = reviewRepository.findById(reviewLikeDtoAdd.getReviewId());
         if (byId.isEmpty()) {
             return Util.getResponseMes(false,"review not found with this id: ",reviewLikeDtoAdd.getReviewId());
+        } else if (byId.get().getComment() == null) {
+            return Util.getResponseMes(false,"review has not comment so you don't reacted this review : ",reviewLikeDtoAdd.getReviewId());
         }
         Review review = byId.get();
         Boolean hasLikedNew = reviewLikeDtoAdd.getHasLiked();
-        LikeReview likeReview = likeReviewRepository.findByReview_IdAndUser_Id(reviewLikeDtoAdd.getReviewId(), user.getId())
-                .orElseGet(() -> createNewLikeReview(review, user, hasLikedNew));
+        Optional<LikeReview> likeReviewOptional = likeReviewRepository.findByReview_IdAndUser_Id(reviewLikeDtoAdd.getReviewId(), user.getId());
+        if (likeReviewOptional.isEmpty()) {
+            LikeReview newLikeReview = createNewLikeReview(review, user, hasLikedNew);
+            return Util.getResponseMes(true,
+                    "Set reaction for Recipe, create like-review",
+                    LikeReviewResponseDto.builder()
+                            .Id(newLikeReview.getId())
+                            .reviewId(newLikeReview.getReview().getId())
+                            .userId(newLikeReview.getUser().getId())
+                            .isLike(newLikeReview.getIsLike())
+                            .build());
+        }
+        LikeReview likeReview = likeReviewOptional.get();
         Boolean isLikeOld = likeReview.getIsLike();
         if (hasLikedNew.equals(isLikeOld)) {
             deleteLikeReview(likeReview.getId());

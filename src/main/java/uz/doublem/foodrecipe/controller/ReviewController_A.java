@@ -56,4 +56,13 @@ public class ReviewController_A {
     }
 
 
+    @DeleteMapping("/{id}/comment")
+    public ResponseEntity<?> deleteComment(@PathVariable Integer id) {
+        //        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = service.deleteComment(id, byId.get());
+        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+    }
+
+
 }

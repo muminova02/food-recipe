@@ -30,6 +30,5 @@ public class Notification {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
     private Boolean hasRead;
-    private String text;
 
 }
