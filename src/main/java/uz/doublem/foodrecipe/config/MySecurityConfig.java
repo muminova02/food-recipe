@@ -35,7 +35,8 @@ public class MySecurityConfig {
                        .cors((cr)-> cr.disable())
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
-                       .requestMatchers("/auth/**")
+                       .requestMatchers("/auth/**","/swagger-ui/**",
+                               "/v3/api-docs/**")
                        .permitAll()
                        .anyRequest()
                        .authenticated();

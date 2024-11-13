@@ -22,7 +22,7 @@ import java.util.Optional;
 import uz.doublem.foodrecipe.util.Util.*;
 
 import static java.util.Collections.*;
-import static uz.doublem.foodrecipe.util.Util.getResponseMes;
+
 
 @Service
 @RequiredArgsConstructor
@@ -222,12 +222,22 @@ public class RecipeServiceM {
         var byId = recipeRepositoryM.findById(recipeId);
         if (byId.isPresent()) {
             if (!saveStepsList(byId.get(),stepsDTOAdds)) {
-               return getResponseMes(false,"steps not added to recipe",stepsDTOAdds);
+//               return getResponseMessa(false,"steps not added to recipe",stepsDTOAdds);
+               return ResponseMessage.builder()
+                       .text("steps not added to recipe")
+                       .data(stepsDTOAdds)
+                       .status(false)
+                       .build();
             }
         }else {
             ResponseMessage.builder().status(false).text("recipe not found").data(recipeId).build();
         }
-        return getResponseMes(true,"steps add to recipe",stepsDTOAdds);
+//        return getResponseMes(true,"steps add to recipe",stepsDTOAdds);
+        return ResponseMessage.builder()
+                .text("steps not added to recipe")
+                .data(stepsDTOAdds)
+                .status(true)
+                .build();
     }
 
     public ResponseMessage addIngredientAndQuantityListToRecipe(List<IngredientDTOAdd> ingredientDTOAdds, Integer recipeId) {
@@ -241,4 +251,10 @@ public class RecipeServiceM {
         }
         return getResponseMes(true,"ingredients add to recipe",ingredientDTOAdds);
     }
+
+    private ResponseMessage getResponseMes(boolean b, String ingredientsAddToRecipe, List<IngredientDTOAdd> ingredientDTOAdds) {
+                return ResponseMessage.builder().status(b).data(ingredientsAddToRecipe).text(ingredientsAddToRecipe).build();
+    }
+
+
 }
