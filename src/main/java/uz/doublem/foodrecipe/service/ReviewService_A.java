@@ -18,6 +18,7 @@ import uz.doublem.foodrecipe.repository.SavedRecipeRepository_A;
 import uz.doublem.foodrecipe.util.Util;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,21 @@ public class ReviewService_A {
 
     }
 
+   public void deleteComment (Integer reviewId, User user) {
+       Optional<Review> byId = reviewRepository.findById(reviewId);
+       if (byId.isPresent()) {
+           Review review = byId.get();
+           User user1 = review.getUser();
+           User author = review.getRecipe().getAuthor();
+           if (Objects.equals(user.getId(), user1.getId() )
+                   || Objects.equals(user.getId(), author.getId())
+                   || user.getId()==1
+           ){
+               reviewRepository.delete(review);
+           }
+       }
+
+   }
 
     public ResponseMessage addReviewForRecipe(ReviewDto reviewDto, User user) {
         Integer recipeId = reviewDto.getRecipeId();
