@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.doublem.foodrecipe.entity.LikeReview;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.Review;
@@ -143,6 +144,7 @@ public class ReviewService_A {
         return Util.getResponseMes(true,"NEW Review create and rate set to Recipe, responce return reviewId ",review.getId());
     }
 
+    @Transactional
     public ResponseMessage reactionToComment(ReviewLikeDtoAdd reviewLikeDtoAdd, User user) {
         Optional<Review> byId = reviewRepository.findById(reviewLikeDtoAdd.getReviewId());
         if (byId.isEmpty()) {
@@ -158,8 +160,17 @@ public class ReviewService_A {
             return Util.getResponseMes(true,"create and reacted to Review", reviewLikeDtoAdd);
         }
         LikeReview likeReview = optionLikeReview.get();
-        likeReview.setIsLike(!likeReview.getIsLike());
+        if ((likeReview.getIsLike()&&reviewLikeDtoAdd.getHasLiked())||(!likeReview.getIsLike()&&!reviewLikeDtoAdd.getHasLiked())) {
+            deleteLikeReview(likeReview.getId());
+            return Util.getResponseMes(true,"set noreacted successfully , and delete review like", reviewLikeDtoAdd);
+        }
+        likeReview.setIsLike(reviewLikeDtoAdd.getHasLiked());
         likeReviewRepository.save(likeReview);
-        return Util.getResponseMes(true,"not create, change like to Review", reviewLikeDtoAdd);
+        return Util.getResponseMes(true,"not create new LikeReview, but change reaction for Review", reviewLikeDtoAdd);
+    }
+
+    @Transactional
+    protected void deleteLikeReview(Integer id) {
+        likeReviewRepository.deleteById(id);
     }
 }
