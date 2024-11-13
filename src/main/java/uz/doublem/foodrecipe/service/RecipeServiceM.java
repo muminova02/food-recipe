@@ -29,6 +29,7 @@ public class RecipeServiceM {
     private final IngredientAndQuantityRepository ingreAndQuanRepo;
     private final StepRepository stepRepository;
     private final NotificationService notificationService;
+    private final ViewRepository viewRepository;
 
 
 
@@ -287,11 +288,18 @@ public class RecipeServiceM {
                     .authorLocation(recipe.getAuthor().getLocation()!=null?recipe.getAuthor().getLocation().getCountry():"Location is not yet")
                     .authorImageUrl(recipe.getAuthor().getImageUrl()!=null?recipe.getAuthor().getImageUrl():"defoultpath or we deal set null, and front check this")
                     .build();
-        incrementCountView(recipe.getId(),user);
+        incrementCountView(recipe,user);
         return getResponseMes(true,"get recipe successfully",build);
     }
 
-    private void incrementCountView(Integer id, User user) {
-
+    private void incrementCountView(Recipe recipe, User user) {
+        if (!viewRepository.existsByUser_IdAndRecipe_Id(user.getId(),recipe.getId())){
+            View view = new View();
+            view.setRecipe(recipe);
+            view.setUser(user);
+            viewRepository.save(view);
+            recipe.setViewsCount(recipe.getViewsCount()+1);
+            recipeRepositoryM.save(recipe);
+        }
     }
 }
