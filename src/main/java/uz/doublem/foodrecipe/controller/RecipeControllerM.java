@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.relational.core.sql.In;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 import uz.doublem.foodrecipe.service.RecipeServiceM;
 import uz.doublem.foodrecipe.service.StepsService;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -159,6 +162,14 @@ public class RecipeControllerM {
         Optional<User> byId = userRepository.findById(2);
         ResponseMessage res = recipeServiceM.getRecipe(id,byId.get());
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+    @GetMapping("/link/{url}")
+    public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url){
+        Integer recipeId = recipeServiceM.checkRecipeLink(url);
+        URI redirectUri = URI.create("/api/recipeM/" + recipeId);
+
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }
 
 }

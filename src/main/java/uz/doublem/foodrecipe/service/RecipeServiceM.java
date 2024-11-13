@@ -302,4 +302,23 @@ public class RecipeServiceM {
             recipeRepositoryM.save(recipe);
         }
     }
+
+    public Integer checkRecipeLink(String url) {
+        String[] split = url.split("_&");
+        try {
+            Integer recipeId = Integer.valueOf(split[1]);
+            Optional<Recipe> byId = recipeRepositoryM.findById(recipeId);
+            if (byId.isPresent()) {
+                Recipe recipe = byId.get();
+                if (recipe.getTitle().equals(split[0])) {
+                    return recipeId;
+                }else {
+                    return -1;
+                }
+            }
+        }catch (Exception e) {
+            return -1;
+        }
+        return -1;
+    }
 }
