@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.Recipe;
@@ -30,7 +31,6 @@ import java.util.Optional;
 public class RecipeControllerM {
 
     private final RecipeServiceM recipeServiceM;
-    private final StepsService stepsService;
     private final UserRepository userRepository;
 
     @Operation(summary = "Recipe qo'shish")
@@ -50,7 +50,7 @@ public class RecipeControllerM {
 
 
     @PostMapping(value = "/addOne",consumes = {"multipart/form-data"})
-    private ResponseEntity<?> addRecipe(
+    public ResponseEntity<?> addRecipe(
         @Parameter(
                 name = "json",
                 description = "Recipe details in JSON format (excluding photo) ",
@@ -74,14 +74,23 @@ public class RecipeControllerM {
 
     }
 
+    @PostMapping("/addOnly")
+    public ResponseEntity<?> addRecipeOnly(@RequestBody RecipeDTOaddOnly recipeDTOaddOnly){
+ //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.addRecipeOnly(recipeDTOaddOnly, byId.get());
+        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+    }
+
+
     @PostMapping("/category")
-    private ResponseEntity<?> addCategoryList(@RequestBody List<CategoryDto> categoryDtoList){
+    public ResponseEntity<?> addCategoryList(@RequestBody List<CategoryDto> categoryDtoList){
        ResponseMessage res =  recipeServiceM.addCategoryList(categoryDtoList);
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
     }
 
     @PostMapping(value = "/ingredient",consumes = {"multipart/form-data"})
-    private ResponseEntity<?> addIngredientList(
+    public ResponseEntity<?> addIngredientList(
             @Parameter(
                     name = "json",
                     description = "Ingredient add in JSON format (excluding photo)",
@@ -101,6 +110,8 @@ public class RecipeControllerM {
         ResponseMessage res =  recipeServiceM.addIngredientList(json,attachments);
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
     }
+
+
 
 
     @Operation(summary = "Upload photo and Video to recipe ")
@@ -125,7 +136,7 @@ public class RecipeControllerM {
 
 
     @PostMapping("/{id}/steps")
-    private ResponseEntity<?> addStepsList(
+    public ResponseEntity<?> addStepsList(
             @PathVariable Integer id,
             @RequestBody List<StepsDTOAdd> stepsDTOAdds){
         ResponseMessage res =  recipeServiceM.addStepsToRecipe(stepsDTOAdds,id);
@@ -134,7 +145,7 @@ public class RecipeControllerM {
 
 
     @PostMapping("/{id}/ingredients")
-    private ResponseEntity<?> addIngredientListToRecipe(
+    public ResponseEntity<?> addIngredientListToRecipe(
             @PathVariable Integer id,
             @RequestBody List<IngredientDTOAdd> ingredientDTOAdds){
         ResponseMessage res =  recipeServiceM.addIngredientAndQuantityListToRecipe(ingredientDTOAdds,id);
@@ -142,6 +153,12 @@ public class RecipeControllerM {
     }
 
 
-
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRecipe(@PathVariable Integer id){
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.getRecipe(id,byId.get());
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
 
 }

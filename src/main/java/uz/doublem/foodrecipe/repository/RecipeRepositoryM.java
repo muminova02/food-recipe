@@ -18,6 +18,8 @@ public interface RecipeRepositoryM extends JpaRepository<Recipe, Integer> {
             "AND (:rate IS NULL OR " +
             "      (:rate = 5 AND r.averageRating = 5) OR " +
             "      (:rate = 4 AND r.averageRating >= 4 AND r.averageRating < 5) OR " +
+            "      (:rate = 2 AND r.averageRating >= 2 AND r.averageRating < 3) OR " +
+            "      (:rate = 1 AND r.averageRating >= 1 AND r.averageRating < 2) OR " +
             "      (:rate = 3 AND r.averageRating >= 3 AND r.averageRating < 4)) " +
             "AND (:category IS NULL OR r.category.name = :category) " +
             "ORDER BY " +

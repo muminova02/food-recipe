@@ -24,6 +24,8 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
+    private String title;
+    private String text;
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.*;
+import uz.doublem.foodrecipe.util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,31 +24,33 @@ public class RecipeService_A {
 
 
 
-    public ResponseMessage allSavedRecipes(UserDTO userDTO) {
-        User user = userRepository.findByEmail(userDTO.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+//    public ResponseMessage allSavedRecipes(UserDTO userDTO) {
+//        User user = userRepository.findByEmail(userDTO.email())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        List<SavedRecipes> savedRecipes = savedRecipeRepository.findByUserId(user.getId())
+//                .orElse(Collections.emptyList());
+//
+//        if (savedRecipes.isEmpty()) {
+//            return ResponseMessage.builder()
+//                    .text("Recipes not found")
+//                    .status(false)
+//                    .data(ResponseEntity.notFound().build())
+//                    .build();
+//        }
+//
+//        List<SavedRecipesReturnDTO> savedRecipesReturnDTOS = savedRecipes.stream()
+//                .map(this::convertToSavedRecipesReturnDTO)
+//                .collect(Collectors.toList());
+//
+//        return ResponseMessage.builder()
+//                .text("success")
+//                .status(true)
+//                .data(savedRecipesReturnDTOS)
+//                .build();
+//    }
 
-        List<SavedRecipes> savedRecipes = savedRecipeRepository.findByUserId(user.getId())
-                .orElse(Collections.emptyList());
 
-        if (savedRecipes.isEmpty()) {
-            return ResponseMessage.builder()
-                    .text("Recipes not found")
-                    .status(false)
-                    .data(ResponseEntity.notFound().build())
-                    .build();
-        }
-
-        List<SavedRecipesReturnDTO> savedRecipesReturnDTOS = savedRecipes.stream()
-                .map(this::convertToSavedRecipesReturnDTO)
-                .collect(Collectors.toList());
-
-        return ResponseMessage.builder()
-                .text("success")
-                .status(true)
-                .data(savedRecipesReturnDTOS)
-                .build();
-    }
 
     private SavedRecipesReturnDTO convertToSavedRecipesReturnDTO(SavedRecipes savedRecipe) {
         Recipe recipe = savedRecipe.getRecipe();
@@ -66,7 +69,9 @@ public class RecipeService_A {
     public ResponseMessage recipeIngredient(Integer id) {
         List<IngredientAndQuantity> ingredients = ingridentsRepository.findByRecipe_Id(id)
                 .orElseThrow(() -> new RuntimeException("Recipe id not found"));
-
+        if (ingredients.isEmpty()) {
+            return Util.getResponseMes(false,"recipe has not Ingredients",id);
+        }
         List<IngredientReturnDTO> ingredientReturnDTOS = ingredients.stream()
                 .map(ingredientAndQuantity -> ingredientRepository.findById(ingredientAndQuantity.getIngredient().getId())
                         .map(ingredient -> {
@@ -98,30 +103,30 @@ public class RecipeService_A {
 
 
 
-
-
-    public ResponseMessage ingridentShare( Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
+    public ResponseMessage getRecipeLink( Integer recipe_id) {
+        Recipe recipe = checkForRecipeId(recipe_id);
         RecipeDTO_A build = RecipeDTO_A.builder().link(recipe.getLink()).build();
         return ResponseMessage.builder().text("success").status(true).data(build).build();
     }
 
 
 
-    public ResponseMessage ingridentMoreRate(Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
+    public ResponseMessage getRecipeRate(Integer recipe_id) {
+        Recipe recipe = checkForRecipeId(recipe_id);
         RecipeDTO_A build = RecipeDTO_A.builder().averageReiting(recipe.getAverageRating()).build();
         return ResponseMessage.builder().text("success").status(true).data(build).build();
     }
 
 
-
-    public ResponseMessage ingridentMoreReviews(Integer recipe_id) {
-        Recipe recipe = recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
-        RecipeDTO_A build = RecipeDTO_A.builder().views(recipe.getViews()).build();
+    public ResponseMessage getRecipeViewCount(Integer recipe_id) {
+        Recipe recipe = checkForRecipeId(recipe_id);
+        RecipeDTO_A build = RecipeDTO_A.builder().viewCount(recipe.getViewsCount()).build();
         return ResponseMessage.builder().text("success").status(true).data(build).build();
     }
 
+    private Recipe checkForRecipeId(Integer recipe_id) {
+        return recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
+    }
 
 
 }

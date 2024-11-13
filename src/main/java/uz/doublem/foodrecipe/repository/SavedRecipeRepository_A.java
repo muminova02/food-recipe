@@ -16,4 +16,7 @@ public interface SavedRecipeRepository_A extends JpaRepository<SavedRecipes, Int
     Optional<List<SavedRecipes>> findByRecipe_Id(Integer id);
 
     Long countByRecipe_Id(Integer id);
+
+
+
 }

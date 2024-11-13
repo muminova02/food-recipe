@@ -2,26 +2,19 @@ package uz.doublem.foodrecipe.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.*;
-import uz.doublem.foodrecipe.util.Util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import uz.doublem.foodrecipe.util.Util.*;
 
-import static java.util.Collections.*;
 import static uz.doublem.foodrecipe.util.Util.getResponseMes;
 
 @Service
@@ -35,6 +28,8 @@ public class RecipeServiceM {
     private final IngredientRepository ingredientRepository;
     private final IngredientAndQuantityRepository ingreAndQuanRepo;
     private final StepRepository stepRepository;
+    private final NotificationService notificationService;
+    private final ViewRepository viewRepository;
 
 
 
@@ -49,25 +44,17 @@ public class RecipeServiceM {
 
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
 
-                Recipe recipe = Recipe.builder()
-                        .title(recipeDTO.getTitle())
-                        .description(recipeDTO.getDescription())
-                        .author(currentUser)
-                        .averageRating(1.0)
-                        .cookingTime(recipeDTO.getCookingTime())
-                        .build();
-
-                Optional<Category> optionCategory = categoryRepository.findById(recipeDTO.getCategory_id());
-                if (optionCategory.isEmpty()) {
+                Recipe recipe = new Recipe();
+                boolean b = saveRecipeOnly(recipeDTO, recipe, currentUser);
+                if (!b) {
                     return ResponseMessage.builder()
                             .status(false)
                             .text("Category topilmadi")
                             .data(recipeDTO.getCategory_id()).build();
                 }
-                recipe.setCategory(optionCategory.get());
-                recipeRepositoryM.save(recipe);
-
+                response.setText("Recipe SAVED IN STEP 1");
                 addAttachmentsToRecipe(attachments, recipe);
+                response.setText(response.getText() + ", Step 2 >> Attachment VIDEO AND Audio added");
 
                 if (!recipeDTO.getIngredientList().isEmpty()) {
                     if (saveIngredientsList(recipeDTO.getIngredientList(), recipe)) {
@@ -82,6 +69,8 @@ public class RecipeServiceM {
                     }
                 }
 
+                notificationService.createNotification(recipe, currentUser);
+                notificationService.createNotificationTwo(recipe, currentUser);
                 response.setText(response.getText() + " >> Finally successfully saved");
                 response.setStatus(true);
                 response.setData(recipeDTO);
@@ -91,6 +80,30 @@ public class RecipeServiceM {
                 throw new RuntimeException("Exception during recipe processing", e);
             }
         }
+
+
+        private boolean saveRecipeOnly(RecipeDTOAdd recipeDTO, Recipe recipe, User currentUser){
+            recipe.setTitle(recipeDTO.getTitle());
+            recipe.setDescription(recipeDTO.getDescription());
+            recipe.setAuthor(currentUser);
+            recipe.setAverageRating(1.);
+            recipe.setCookingTime(recipeDTO.getCookingTime());
+            recipe.setViewsCount(0L);
+            Optional<Category> optionCategory = categoryRepository.findById(recipeDTO.getCategory_id());
+            if (optionCategory.isEmpty()) {
+                return false;
+            }
+            recipe.setCategory(optionCategory.get());
+            recipeRepositoryM.save(recipe);
+            String title = recipe.getTitle();
+            Integer id = recipe.getId();
+            String fullTitle = title + "_&" + id;
+            String link = "http://localhost:8080/api/recipe/link/" + fullTitle;
+            recipe.setLink(link);
+            recipeRepositoryM.save(recipe);
+            return true;
+        }
+
 
         private void addAttachmentsToRecipe(List<MultipartFile> attachments, Recipe recipe) {
             Attachment attachment = attachmentService.save(attachments.get(0));
@@ -240,5 +253,53 @@ public class RecipeServiceM {
             ResponseMessage.builder().status(false).text("recipe not found").data(recipeId).build();
         }
         return getResponseMes(true,"ingredients add to recipe",ingredientDTOAdds);
+    }
+    public ResponseMessage addRecipeOnly(RecipeDTOaddOnly recipeDTOaddOnly,User user) {
+        Recipe recipe = new Recipe();
+        RecipeDTOAdd recipeDTOAdd = RecipeDTOAdd.builder()
+                .title(recipeDTOaddOnly.getTitle())
+                .description(recipeDTOaddOnly.getDescription())
+                .cookingTime(recipeDTOaddOnly.getCookingTime())
+                .category_id(recipeDTOaddOnly.getCategory_id())
+                .build();
+
+        boolean b = saveRecipeOnly(recipeDTOAdd, recipe, user);
+        if (b) {
+            return getResponseMes(true,"recipe add successfully",recipeDTOaddOnly);
+        }
+        return getResponseMes(false,"recipe not added",recipeDTOaddOnly);
+    }
+
+    public ResponseMessage getRecipe(Integer id, User user) {
+        Optional<Recipe> byId = recipeRepositoryM.findById(id);
+        if (byId.isEmpty()) {
+            return getResponseMes(false,"recipe not found",id);
+        }
+        Recipe recipe = byId.get();
+        RecipeResponceDTO build = RecipeResponceDTO.builder()
+                    .id(recipe.getId())
+                    .title(recipe.getTitle())
+                    .description(recipe.getDescription())
+                    .imageUrl(recipe.getImageUrl())
+                    .videoUrl(recipe.getVideoUrl())
+                    .averageRating(recipe.getAverageRating())
+                    .viewCount(recipe.getViewsCount())
+                    .author(recipe.getAuthor().getName())
+                    .authorLocation(recipe.getAuthor().getLocation()!=null?recipe.getAuthor().getLocation().getCountry():"Location is not yet")
+                    .authorImageUrl(recipe.getAuthor().getImageUrl()!=null?recipe.getAuthor().getImageUrl():"defoultpath or we deal set null, and front check this")
+                    .build();
+        incrementCountView(recipe,user);
+        return getResponseMes(true,"get recipe successfully",build);
+    }
+
+    private void incrementCountView(Recipe recipe, User user) {
+        if (!viewRepository.existsByUser_IdAndRecipe_Id(user.getId(),recipe.getId())){
+            View view = new View();
+            view.setRecipe(recipe);
+            view.setUser(user);
+            viewRepository.save(view);
+            recipe.setViewsCount(recipe.getViewsCount()+1);
+            recipeRepositoryM.save(recipe);
+        }
     }
 }

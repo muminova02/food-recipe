@@ -14,6 +14,7 @@ import uz.doublem.foodrecipe.payload.search.SearchDto;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
 import uz.doublem.foodrecipe.repository.ResentSearchRepository;
 import uz.doublem.foodrecipe.repository.UserRepository;
+import uz.doublem.foodrecipe.util.Util;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +29,13 @@ public class SearchService {
 
     public ResponseMessage getResentSearch(Integer size, Integer page, Integer userId) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Integer> recipeIdsByUserId = resentSearchRepository.findRecipeIdsByUserId(userId, pageRequest);
+        if (!userRepository.existsById(userId)) {
+            return Util.getResponseMes(false,"User not found with this id",userId);
+        }
+        Page<RecentSearch> allByUserId = resentSearchRepository.findAllByUser_Id(userId, pageRequest);
 
-        List<Integer> list = recipeIdsByUserId.get().toList();
-        List<Recipe> recipes = recipeRepositoryM.findByIdIn(list);
-        List<RecipeDtoShow> recipeDtoShowList = recipes.stream()
-                .map(recipe -> {
+        List<RecipeDtoShow> recipeDtoShowList = allByUserId.get().map(recentSearch -> {
+                    Recipe recipe = recentSearch.getRecipe();
                     return RecipeDtoShow.builder()
                             .id(recipe.getId())
                             .title(recipe.getTitle())
@@ -71,7 +73,7 @@ public class SearchService {
     public void createRecentSearch(Integer id, User user) {
         RecentSearch recentSearch = new RecentSearch();
         if (!userRepository.existsById(user.getId())&&!recipeRepositoryM.existsById(id)){
-            throw new RuntimeException("uesr or recipe not found by id");
+            throw new RuntimeException("user or recipe not found by id");
         }else {
             Optional<Recipe> byId = recipeRepositoryM.findById(id);
             if (byId.isPresent()) {

@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/notification")
+@RequestMapping("/api/notification")
 public class NotificationController {
     final NotificationService notificationService;
     final UserRepository userRepository;
@@ -25,7 +25,7 @@ public class NotificationController {
         Optional<User> byId = userRepository.findById(2);
         User user = byId.get();
         ResponseMessage notification = notificationService.getNotification(user,size,page,read);
-        return ResponseEntity.status(notification.getStatus()?200:400).body(notification.getData());
+        return ResponseEntity.status(notification.getStatus()?200:400).body(notification);
     }
 
 

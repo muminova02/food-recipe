@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/saved-recipes")
+@RequestMapping("/api/saved-recipes")
 public class SavedRecipeController {
     final SavedRecipeService savedRecipeService;
     final UserRepository userRepository;
@@ -22,7 +22,7 @@ public class SavedRecipeController {
 
     @GetMapping
     public ResponseEntity<?> getSavedRecipes(@RequestParam Integer size, @RequestParam Integer page ) {
-        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
        ResponseMessage res= savedRecipeService.getSavedRecipes(byId.get(),size, page);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
