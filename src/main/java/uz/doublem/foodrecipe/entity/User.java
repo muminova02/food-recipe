@@ -2,18 +2,13 @@ package uz.doublem.foodrecipe.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -37,8 +32,11 @@ public class User implements UserDetails {
     private Boolean verified = false;
     private String imageUrl;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<User> followers;
+    @JsonIgnore
+    private Set<User> followers;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
     private Location location;
     private LocalDateTime verificationCodeGeneratedTime;
     private LocalDateTime resetPasswordCodeGeneratedTime;
@@ -58,4 +56,48 @@ public class User implements UserDetails {
         return email;
     }
 
+    public Boolean follow(User userToFollow) {
+        if (!this.followers.contains(userToFollow)) {
+            this.followers.add(userToFollow);
+            userToFollow.addFollower(this);
+            this.following_count++;
+            userToFollow.following_count++;
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean unfollow(User userToUnfollow) {
+        if (this.followers.contains(userToUnfollow)) {
+            this.followers.remove(userToUnfollow);
+            userToUnfollow.removeFollower(this);
+            this.following_count--;
+            userToUnfollow.following_count--;
+            return true;
+        }
+        return false;
+    }
+    private void addFollower(User user) {
+        this.followers.add(user);
+    }
+
+    private void removeFollower(User user) {
+        this.followers.remove(user);
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id != null && id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    public String getImageUrl() {
+        return null;
+    }
 }

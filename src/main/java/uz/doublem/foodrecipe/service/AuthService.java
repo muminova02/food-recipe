@@ -9,8 +9,9 @@ import uz.doublem.foodrecipe.config.JwtProvider;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.payload.ResetPasswordDTO;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
-import uz.doublem.foodrecipe.payload.UserDTO;
-import uz.doublem.foodrecipe.payload.UserSignInDTO;
+import uz.doublem.foodrecipe.payload.user.UserDTO;
+import uz.doublem.foodrecipe.payload.user.UserSignInDTO;
+import uz.doublem.foodrecipe.payload.user.UserVerifyDTO;
 import uz.doublem.foodrecipe.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -60,12 +61,12 @@ public class AuthService {
                     .text("Please confirm your account first!").build();
         }
         String token = jwtProvider.generateToken(user);
-        return ResponseMessage.builder().status(true).data(token).text("your token " + userSignInDTO.getName()).build();
+        return ResponseMessage.builder().status(true).data(token).text("your token ").build();
     }
 
-    public ResponseMessage verify(UserSignInDTO userSignInDTO){
+    public ResponseMessage verify(UserVerifyDTO userverifyDTO){
         LocalDateTime time = LocalDateTime.now();
-        User user = userRepository.findByEmail(userSignInDTO.getEmail()).orElseThrow(() -> new RuntimeException("user not found!"));
+        User user = userRepository.findByEmail(userverifyDTO.getEmail()).orElseThrow(() -> new RuntimeException("user not found!"));
         LocalDateTime generetedCodeTime = user.getVerificationCodeGeneratedTime();
         if (!user.getVerified()){
             if (user.getVerificationCode()==null) {
@@ -81,7 +82,7 @@ public class AuthService {
                     .data("error")
                     .text("confirmation time expired").build();
         }
-        if (!user.getVerificationCode().equalsIgnoreCase(userSignInDTO.getCode())|| !user.getEmail().equalsIgnoreCase(userSignInDTO.getEmail())){
+        if (!user.getVerificationCode().equalsIgnoreCase(userverifyDTO.getCode())|| !user.getEmail().equalsIgnoreCase(userverifyDTO.getEmail())){
             return ResponseMessage.builder().status(false).data("error")
                     .text("incorrect code")
                     .build();
