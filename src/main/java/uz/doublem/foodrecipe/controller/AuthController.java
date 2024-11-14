@@ -2,18 +2,12 @@ package uz.doublem.foodrecipe.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import uz.doublem.foodrecipe.config.JwtProvider;
-import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.payload.*;
-import uz.doublem.foodrecipe.repository.UserRepository;
+import uz.doublem.foodrecipe.payload.user.UserDTO;
+import uz.doublem.foodrecipe.payload.user.UserSignInDTO;
+import uz.doublem.foodrecipe.payload.user.UserVerifyDTO;
 import uz.doublem.foodrecipe.service.AuthService;
-import uz.doublem.foodrecipe.service.SmsService;
-import uz.doublem.foodrecipe.util.Util;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify")
-    public ResponseMessage verify(@RequestBody UserSignInDTO userSignInDTO){
+    public ResponseMessage verify(@RequestBody UserVerifyDTO userSignInDTO){
        return authService.verify(userSignInDTO);
     }
 

@@ -158,7 +158,6 @@ public class RecipeControllerM {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRecipe(@PathVariable Integer id){
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
         ResponseMessage res = recipeServiceM.getRecipe(id,byId.get());
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
@@ -173,7 +172,7 @@ public class RecipeControllerM {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateRecipe(@PathVariable Integer id, @RequestBody){
+    public ResponseEntity<?> updateRecipe(@PathVariable Integer id){
         return null;
     }
 
