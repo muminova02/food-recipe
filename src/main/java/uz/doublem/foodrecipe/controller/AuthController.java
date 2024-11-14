@@ -30,8 +30,8 @@ public class AuthController {
     public ResponseMessage verify(@RequestBody UserVerifyDTO userSignInDTO){
        return authService.verify(userSignInDTO);
     }
-    @PostMapping("/request-password-reset")
 
+    @PostMapping("/request-password-reset")
     public ResponseMessage requestPass(@RequestParam String email){
        return authService.requestPasswordReset(email);
     }

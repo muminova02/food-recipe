@@ -1,6 +1,7 @@
 package uz.doublem.foodrecipe.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 import java.io.File;
 
 @Component
+
 public class DataLoader implements CommandLineRunner
 {
 

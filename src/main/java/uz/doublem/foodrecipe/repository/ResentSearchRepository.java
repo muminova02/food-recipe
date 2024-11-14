@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public interface ResentSearchRepository extends JpaRepository<RecentSearch, Integer> {
 
-    @Query("SELECT r.recipe.id FROM RecentSearch r WHERE r.user.id = :userId ORDER BY r.createdAt DESC")
-    Page<Integer> findRecipeIdsByUserId(@Param("userId") Integer userId, Pageable pageable);
+
+    Page<RecentSearch> findAllByUser_Id(@Param("userId") Integer userId, Pageable pageable);
 
     Optional<RecentSearch> findFirstByUserIdOrderByCreatedAtAsc(@Param("userId") Integer userId);
 

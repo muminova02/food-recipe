@@ -21,6 +21,7 @@ public class SavedRecipeService {
 
     private  final SavedRecipesRepository savedReciepe;
     private final RecipeRepositoryM recipeRepository;
+    private final NotificationService notificationService;
 
 
 
@@ -31,6 +32,7 @@ public class SavedRecipeService {
         List<SavedResponseDto> list = allByOwnerId.get().map(savedRecipes -> {
             Recipe recipe = savedRecipes.getRecipe();
             return SavedResponseDto.builder()
+                    .id(recipe.getId())
                     .author(recipe.getAuthor().getName())
                     .averageRating(recipe.getAverageRating())
                     .title(recipe.getTitle())
@@ -61,8 +63,8 @@ public class SavedRecipeService {
             savedReciepe.save(savedRecipe);
             responseMessage.setText("recipe saved for user ");
             responseMessage.setStatus(true);
+            notificationService.createNotificationForSavedRecipe(recipe,user);
         });
-
         return responseMessage;
     }
 }

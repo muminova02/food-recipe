@@ -3,15 +3,10 @@ package uz.doublem.foodrecipe.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uz.doublem.foodrecipe.enums.Role;
-
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,10 +23,10 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
-    private Role role;
     @JsonIgnore
     private String password_hash;
     private Integer following_count =0;
+    private Integer followers_count =0;
     private String verificationCode;
     private String resetPasswordCode;
     private Boolean verified = false;
@@ -39,9 +34,7 @@ public class User implements UserDetails {
     private Attachment attachment;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
-    @ToString.Exclude
     private Set<User> followers;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
@@ -103,5 +96,9 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public String getImageUrl() {
+        return null;
     }
 }
