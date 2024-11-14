@@ -173,7 +173,8 @@ public class RecipeControllerM {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateRecipe(@PathVariable Integer id, @RequestBody){
+    public ResponseEntity<?> updateRecipe(@PathVariable Integer id, @RequestBody UpdateRecipeDto updateRecipeDto){
+
         return null;
     }
 
