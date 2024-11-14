@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class UpdateRecipeDto {
+    private Integer userId;
     private Integer recipeId;
     private String recipeName;
     private String recipeDescription;

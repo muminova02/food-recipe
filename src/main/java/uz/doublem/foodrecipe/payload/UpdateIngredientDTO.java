@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class UpdateIngredientDTO {
     private Integer ingredientAndQuantityId;
-    private String ingredientId;
+    private Integer ingredientId;
     private String quantity;
 }

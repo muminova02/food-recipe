@@ -26,7 +26,7 @@ public class UserService {
         User user = userRepository.findById(currentUser.getId()).orElseThrow(()->new RuntimeException("user not found!"));
         Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
         user.setName(editDTO.getName());
-//        user.setRole(Role.valueOf(editDTO.getRole()));
+        user.setRole(Role.valueOf(editDTO.getRole()));
         if (optionalLocation.isEmpty()){
             Location location = new Location();
             location.setCountry(editDTO.getCountry());
@@ -40,7 +40,7 @@ public class UserService {
             userRepository.save(user);
             UserResponseDTO dto = UserResponseDTO.builder()
                     .id(user.getId())
-//                    .role(user.getRole())
+                    .role(user.getRole())
                     .email(user.getEmail())
                     .city(user.getLocation().getCity())
                     .country(user.getLocation().getCountry()).name(user.getName()).build();
