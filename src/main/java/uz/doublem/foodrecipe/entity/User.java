@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import uz.doublem.foodrecipe.enums.Role;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +25,7 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
+    private Role role;
     @JsonIgnore
     private String password_hash;
     private Integer following_count =0;
@@ -30,8 +33,7 @@ public class User implements UserDetails {
     private String verificationCode;
     private String resetPasswordCode;
     private Boolean verified = false;
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Attachment attachment;
+    private String imageUrl;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<User> followers;

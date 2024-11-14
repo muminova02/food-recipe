@@ -2,23 +2,18 @@ package uz.doublem.foodrecipe.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.repository.*;
-import uz.doublem.foodrecipe.util.Util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 import static uz.doublem.foodrecipe.util.Util.getResponseMes;
 
 @Service
@@ -34,7 +29,8 @@ public class RecipeServiceM {
     private final StepRepository stepRepository;
     private final NotificationService notificationService;
     private final ViewRepository viewRepository;
-
+    private final UserRepository userRepository;
+    private final AttachmentRepository attachmentRepository;
 
 
     public ResponseMessage  addRecipe(String json, List<MultipartFile> attachments, User currentUser) {
@@ -102,7 +98,7 @@ public class RecipeServiceM {
             String title = recipe.getTitle();
             Integer id = recipe.getId();
             String fullTitle = title + "_&" + id;
-            String link = "http://localhost:8080/api/recipe/link/" + fullTitle;
+            String link = "http://localhost:8080/api/recipeM/link/" + fullTitle;
             recipe.setLink(link);
             recipeRepositoryM.save(recipe);
             return true;
@@ -324,5 +320,185 @@ public class RecipeServiceM {
             return -1;
         }
         return -1;
+    }
+
+    public ResponseMessage updateRecipeOnly(UpdateRecipeDto updateRecipeDto, User user) {
+        updateRecipeDto.setUserId(user.getId());
+        if (updateRecipeDto.getRecipeId()==null||user.getId()==null) {
+            return getResponseMes(false,"recipe or user should not be null",updateRecipeDto);
+        }
+        Optional<Recipe> recipeOptional = recipeRepositoryM.findById(updateRecipeDto.getRecipeId());
+        if (recipeOptional.isEmpty()) {
+            return getResponseMes(false,"recipe not found with this id : ",updateRecipeDto);
+        }
+        Recipe recipe = recipeOptional.get();
+        if (!recipe.getAuthor().getId().equals(user.getId())) {
+            return getResponseMes(false,"this user have not authorization change this recipe",updateRecipeDto);
+        }
+        if (updateRecipeDto.getRecipeName()!=null) {
+            recipe.setTitle(updateRecipeDto.getRecipeName());
+        }
+        if (updateRecipeDto.getRecipeDescription()!=null) {
+            recipe.setDescription(updateRecipeDto.getRecipeDescription());
+        }
+        if (updateRecipeDto.getCookingTime()!=null) {
+            recipe.setCookingTime(updateRecipeDto.getCookingTime());
+        }
+        recipeRepositoryM.save(recipe);
+        return getResponseMes(true,"successfully updated recipe ",updateRecipeDto);
+    }
+
+    public ResponseMessage updateRecipeSteps(List<UpdateStepsDto> updateStepsDto, Integer recipeId, User user) {
+        if (!recipeRepositoryM.isRecipeOwnedByUser(recipeId, user.getId())) {
+            return getResponseMes(false,"this user have not authorization change this recipe", recipeId);
+        }
+        updateStepsDto.forEach(stepsDto -> {
+            Optional<Step> byId = stepRepository.findById(stepsDto.getStepId());
+            if (byId.isPresent()) {
+                Step step = byId.get();
+                step.setDescription(stepsDto.getDescription());
+            }
+            else {
+                throw new RuntimeException("step not found with this id : " + stepsDto.getStepId());
+            }
+        });
+        return getResponseMes(true,"successfully updated steps ",HttpStatus.RESET_CONTENT);
+    }
+
+    public ResponseMessage updateIngredients(List<UpdateIngredientDTO> updateIngredientDTOs, Integer recipeId, User user) {
+        if (!recipeRepositoryM.isRecipeOwnedByUser(recipeId, user.getId())) {
+            return getResponseMes(false,"this user have not authorization change this recipe", recipeId);
+        }
+        updateIngredientDTOs.forEach(updateIngredientDTO -> {
+            check(updateIngredientDTO);
+            Optional<IngredientAndQuantity> byId = ingreAndQuanRepo.findById(updateIngredientDTO.getIngredientAndQuantityId());
+            if (byId.isPresent()) {
+                IngredientAndQuantity ingredientAndQuantity = byId.get();
+                Optional<Ingredient> byId1 = ingredientRepository.findById(updateIngredientDTO.getIngredientId()!=null?updateIngredientDTO.getIngredientId():-1);
+                byId1.ifPresent(ingredientAndQuantity::setIngredient);
+                ingredientAndQuantity.setQuantity(updateIngredientDTO.getQuantity());
+                ingreAndQuanRepo.save(ingredientAndQuantity);
+            }
+        });
+        return getResponseMes(true,"successfully updated ingredients ",HttpStatus.RESET_CONTENT);
+    }
+
+    private void check(Object o){
+        if(o==null){
+            throw new RuntimeException("object is null" + o.getClass().getName());
+        }
+    }
+
+    public ResponseMessage changeAttachments(List<MultipartFile> attachments, Integer id) {
+        Optional<Recipe> byId = recipeRepositoryM.findById(id);
+        if (byId.isEmpty()) {
+            return getResponseMes(false,"recipe not found with this id : ",id);
+        }
+        Recipe recipe = byId.get();
+        attachments.forEach(multipartFile -> {
+            String attachmentUrl;
+            if (Objects.requireNonNull(multipartFile.getContentType()).startsWith("image")) {
+                attachmentUrl = recipe.getImageUrl();
+            }else {
+                attachmentUrl = recipe.getVideoUrl();
+            }
+            String[] split = attachmentUrl.split("/");
+            String imageId = split[split.length - 1];
+            attachmentService.update(imageId,multipartFile);
+        });
+        return getResponseMes(true,"successfully changed attachment ",HttpStatus.RESET_CONTENT);
+    }
+
+    @Transactional
+    public ResponseMessage deleteRecipe(Integer id, User user) {
+        if (!recipeRepositoryM.isRecipeOwnedByUser(id,user.getId())) {
+            return getResponseMes(false,"you have not authorization delete this recipe", id);
+        }
+        recipeRepositoryM.deleteById(id);
+        return getResponseMes(true,"recipe delete successfully",id);
+    }
+
+    @Transactional
+    public ResponseMessage deleteStep(Integer id, Integer recipeId, User user) {
+        if (!recipeRepositoryM.isRecipeOwnedByUser(recipeId,user.getId())) {
+            return getResponseMes(false,"you have not authorization delete this recipe", recipeId);
+        }
+        stepRepository.deleteById(id);
+        return getResponseMes(true,"ingredient delete successfully",id);
+    }
+
+    @Transactional
+    public ResponseMessage deleteIngredient(Integer id, Integer recipeId, User user) {
+        if (!recipeRepositoryM.isRecipeOwnedByUser(recipeId,user.getId())) {
+            return getResponseMes(false,"you have not authorization delete this recipe", recipeId);
+        }
+        ingreAndQuanRepo.deleteById(id);
+        return getResponseMes(true,"ingredient delete successfully",id);
+    }
+
+    @Transactional
+    public ResponseMessage deleteAttachment(String id, Integer recipeId, User user) {
+        if (!recipeRepositoryM.isRecipeOwnedByUser(recipeId,user.getId())) {
+            return getResponseMes(false,"you have not authorization delete this recipe", recipeId);
+        }
+
+        Optional<Recipe> byId = recipeRepositoryM.findById(recipeId);
+        Recipe recipe = byId.get();
+        String[] split = recipe.getImageUrl().split("/");
+        String idUrl = split[split.length - 1];
+        if (idUrl.equals(id)) {
+            attachmentService.delete(id);
+            recipe.setImageUrl(null);
+        }
+        String[] videoUrl = recipe.getVideoUrl().split("/");
+        String idVUrl = videoUrl[videoUrl.length - 1];
+        if (idVUrl.equals(id)) {
+            attachmentService.delete(id);
+            recipe.setVideoUrl(null);
+        }
+        recipeRepositoryM.save(recipe);
+        return getResponseMes(true,"recipe attachment delete successfully",recipeId);
+    }
+
+    public ResponseMessage editCategory(CategoryEditDto categoryDto) {
+        categoryRepository.updateName(categoryDto.getId(),categoryDto.getName());
+        return getResponseMes(true,"update name successfully",categoryDto);
+    }
+
+    public ResponseMessage editIngredient(IngredientEditDto ingredientEditDto) {
+        ingredientRepository.updateName(ingredientEditDto.getIngredientId(),ingredientEditDto.getIngredientName());
+        return getResponseMes(true,"update ingredient successfully",ingredientEditDto);
+    }
+
+
+    @Transactional
+    public ResponseMessage deleteCategory(Integer id) {
+        categoryRepository.deleteById(id);
+        return getResponseMes(true,"deleted successfully",id);
+    }
+
+    @Transactional
+    public ResponseMessage deleteIngredientAdmin(Integer id) {
+        ingredientRepository.deleteById(id);
+        return getResponseMes(true,"deleted successfully",id);
+    }
+
+    public ResponseMessage getSteps(Integer id) {
+        if (!recipeRepositoryM.existsById(id)) {
+            return getResponseMes(false,"recipe not found with this id : ",id);
+        }
+        List<Step> steps = stepRepository.findByRecipe_Id(id);
+        if (steps.isEmpty()) {
+            return getResponseMes(true,"recipe have not yet steps ", Collections.emptyList());
+        }
+        List<StepResponseDto> stepDto = steps.stream().map(step ->
+                StepResponseDto.builder()
+                        .stepId(step.getId())
+                        .stepNumber(step.getStep_number())
+                        .text(step.getDescription())
+                        .recipeId(id)
+                        .build()
+        ).toList();
+        return getResponseMes(true,"steps list",stepDto);
     }
 }

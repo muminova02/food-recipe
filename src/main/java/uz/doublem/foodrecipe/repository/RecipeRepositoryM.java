@@ -32,5 +32,10 @@ public interface RecipeRepositoryM extends JpaRepository<Recipe, Integer> {
             @Param("time") String time,
             @Param("category") String category,
             Pageable pageable);
+
+
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
+            "FROM Recipe r WHERE r.id = :recipeId AND r.author.id = :userId")
+    Boolean isRecipeOwnedByUser(@Param("recipeId") Integer recipeId, @Param("userId") Integer userId);
 }
 

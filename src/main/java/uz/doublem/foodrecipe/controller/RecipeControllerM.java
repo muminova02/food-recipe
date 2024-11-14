@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uz.doublem.foodrecipe.entity.Ingredient;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.payload.*;
@@ -52,47 +53,47 @@ public class RecipeControllerM {
     })
 
 
-    @PostMapping(value = "/addOne",consumes = {"multipart/form-data"})
+    @PostMapping(value = "/addOne", consumes = {"multipart/form-data"})
     public ResponseEntity<?> addRecipe(
-        @Parameter(
-                name = "json",
-                description = "Recipe details in JSON format (excluding photo) ",
-                required = true,
-                schema = @Schema(implementation = RecipeDTOAdd.class, format = "json", type = "string")
-        )
-        @RequestPart(value = "json") String json,
-        @Parameter(
-                description = "Select picture on format .jpg or .png or .svg or video on format .mp4, .avi, .mov",
-                content = @Content(mediaType = "multipart/form-data",
-                        schema = @Schema(
-                                type = "string",
-                                format = "binary",
-                                example = "image.png, or video.mp4"
-                        )))
-        @RequestPart(name = "file", required = false) List<MultipartFile> attachments){
+            @Parameter(
+                    name = "json",
+                    description = "Recipe details in JSON format (excluding photo) ",
+                    required = true,
+                    schema = @Schema(implementation = RecipeDTOAdd.class, format = "json", type = "string")
+            )
+            @RequestPart(value = "json") String json,
+            @Parameter(
+                    description = "Select picture on format .jpg or .png or .svg or video on format .mp4, .avi, .mov",
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(
+                                    type = "string",
+                                    format = "binary",
+                                    example = "image.png, or video.mp4"
+                            )))
+            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
 //        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.addRecipe(json,attachments,byId.get());
-        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+        ResponseMessage res = recipeServiceM.addRecipe(json, attachments, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
 
     }
 
     @PostMapping("/addOnly")
-    public ResponseEntity<?> addRecipeOnly(@RequestBody RecipeDTOaddOnly recipeDTOaddOnly){
- //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> addRecipeOnly(@RequestBody RecipeDTOaddOnly recipeDTOaddOnly) {
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
         ResponseMessage res = recipeServiceM.addRecipeOnly(recipeDTOaddOnly, byId.get());
-        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+        return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
 
     @PostMapping("/category")
-    public ResponseEntity<?> addCategoryList(@RequestBody List<CategoryDto> categoryDtoList){
-       ResponseMessage res =  recipeServiceM.addCategoryList(categoryDtoList);
-        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+    public ResponseEntity<?> addCategoryList(@RequestBody List<CategoryDto> categoryDtoList) {
+        ResponseMessage res = recipeServiceM.addCategoryList(categoryDtoList);
+        return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
-    @PostMapping(value = "/ingredient",consumes = {"multipart/form-data"})
+    @PostMapping(value = "/ingredient", consumes = {"multipart/form-data"})
     public ResponseEntity<?> addIngredientList(
             @Parameter(
                     name = "json",
@@ -109,16 +110,14 @@ public class RecipeControllerM {
                                     format = "binary",
                                     example = "image.png, or video.mp4"
                             )))
-            @RequestPart(name = "file") List<MultipartFile> attachments){
-        ResponseMessage res =  recipeServiceM.addIngredientList(json,attachments);
-        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+            @RequestPart(name = "file") List<MultipartFile> attachments) {
+        ResponseMessage res = recipeServiceM.addIngredientList(json, attachments);
+        return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
 
-
-
     @Operation(summary = "Upload photo and Video to recipe ")
-    @PostMapping(value = "/{id}/attachments",consumes = {
+    @PostMapping(value = "/{id}/attachments", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     public ResponseEntity<?> upload(
@@ -131,49 +130,150 @@ public class RecipeControllerM {
                                     format = "binary",
                                     example = "image.png, or video.mp4"
                             )))
-            @RequestPart(name = "file", required = false) List<MultipartFile> attachments)
-    {
-        ResponseMessage res = recipeServiceM.upload(attachments,id);
-        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
+        ResponseMessage res = recipeServiceM.upload(attachments, id);
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
 
     @PostMapping("/{id}/steps")
     public ResponseEntity<?> addStepsList(
             @PathVariable Integer id,
-            @RequestBody List<StepsDTOAdd> stepsDTOAdds){
-        ResponseMessage res =  recipeServiceM.addStepsToRecipe(stepsDTOAdds,id);
-        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+            @RequestBody List<StepsDTOAdd> stepsDTOAdds) {
+        ResponseMessage res = recipeServiceM.addStepsToRecipe(stepsDTOAdds, id);
+        return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
 
     @PostMapping("/{id}/ingredients")
     public ResponseEntity<?> addIngredientListToRecipe(
             @PathVariable Integer id,
-            @RequestBody List<IngredientDTOAdd> ingredientDTOAdds){
-        ResponseMessage res =  recipeServiceM.addIngredientAndQuantityListToRecipe(ingredientDTOAdds,id);
-        return ResponseEntity.status(res.getStatus()?201:400).body(res);
+            @RequestBody List<IngredientDTOAdd> ingredientDTOAdds) {
+        ResponseMessage res = recipeServiceM.addIngredientAndQuantityListToRecipe(ingredientDTOAdds, id);
+        return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRecipe(@PathVariable Integer id){
+    public ResponseEntity<?> getRecipe(@PathVariable Integer id) {
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.getRecipe(id,byId.get());
-        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+        ResponseMessage res = recipeServiceM.getRecipe(id, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @GetMapping("/link/{url}")
-    public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url){
+    public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url) {
         Integer recipeId = recipeServiceM.checkRecipeLink(url);
         URI redirectUri = URI.create("/api/recipeM/" + recipeId);
 
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateRecipe(@PathVariable Integer id){
-        return null;
+    @PutMapping("/edit-only")
+    public ResponseEntity<?> updateRecipe(@RequestBody UpdateRecipeDto updateRecipeDto) {
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.updateRecipeOnly(updateRecipeDto, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
+    @PutMapping("/{id}/edit-steps")
+    public ResponseEntity<?> updateSteps(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateStepsDto> updateStepsDto) {
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.updateRecipeSteps(updateStepsDto, recipeId, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @PutMapping("/{id}/edit-ingredients")
+    public ResponseEntity<?> updateIngredients(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateIngredientDTO> updateIngredientDTOs) {
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.updateIngredients(updateIngredientDTOs, recipeId, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @Operation(summary = "Change photo or Video for recipe ")
+    @PutMapping(value = "/{id}/attachments", consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    public ResponseEntity<?> changeAttachments(
+            @PathVariable Integer id,
+            @Parameter(
+                    description = "Select picture on format .jpg or .png and .svg or video on format .mp4, .avi, .mov for video,",
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(
+                                    type = "string",
+                                    format = "binary",
+                                    example = "image.png, or video.mp4"
+                            )))
+            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
+        ResponseMessage res = recipeServiceM.changeAttachments(attachments, id);
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRecipe(@PathVariable Integer id) {
+        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.deleteRecipe(id, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @DeleteMapping("/{recipeId}/step/{id}")
+    public ResponseEntity<?> deleteStep(@PathVariable Integer recipeId, @PathVariable Integer id) {
+//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.deleteStep(id, recipeId, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @DeleteMapping("/{recipeId}/ingredient/{id}")
+    public ResponseEntity<?> deleteIngredient(@PathVariable Integer recipeId, @PathVariable Integer id) {
+//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.deleteIngredient(id, recipeId, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @DeleteMapping("/{recipeId}/attachment/{id}")
+    public ResponseEntity<?> deleteAttachment(@PathVariable Integer recipeId, @PathVariable String id) {
+//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = recipeServiceM.deleteAttachment(id, recipeId, byId.get());
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+
+    @PutMapping("/category")
+    public ResponseEntity<?> editCategory(@RequestBody CategoryEditDto categoryDto) {
+        ResponseMessage res = recipeServiceM.editCategory(categoryDto);
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @PutMapping("/ingredient")
+    public ResponseEntity<?> editIngredient(@RequestBody IngredientEditDto ingredientEditDto) {
+        ResponseMessage res = recipeServiceM.editIngredient(ingredientEditDto);
+        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+    }
+
+    @DeleteMapping("/category/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Integer id) {
+        ResponseMessage res = recipeServiceM.deleteCategory(id);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+    @DeleteMapping("/ingredient/{id}")
+    public ResponseEntity<?> deleteIngredient(@PathVariable Integer id) {
+        ResponseMessage res = recipeServiceM.deleteIngredientAdmin(id);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+
+    @GetMapping("/{id}/steps")
+    public ResponseEntity<?> getSteps(@PathVariable Integer id) {
+        ResponseMessage res = recipeServiceM.getSteps(id);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
 }
