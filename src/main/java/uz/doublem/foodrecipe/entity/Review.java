@@ -23,28 +23,23 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull(message = "Comment is required")
-    @Column(nullable = false)
-    private String comment;
 
+    private String comment;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @NotNull(message = "Rating is required")
+
     @Min(value = 1, message = "Rating must be at least 1")
     @Max(value = 5, message = "Rating must be at most 5")
-    @Column(nullable = false)
     private Integer rating;
 
     @Builder.Default
-    @Column(nullable = false)
     private Integer likeCount = 0;
 
     @Builder.Default
-    @Column(nullable = false)
     private Integer dislikeCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 
-@ControllerAdvice
+
 public class ExceptionHandlerService {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handelException(Exception e) {

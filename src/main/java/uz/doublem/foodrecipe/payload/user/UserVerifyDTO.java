@@ -1,9 +1,9 @@
-package uz.doublem.foodrecipe.payload;
+package uz.doublem.foodrecipe.payload.user;
 
 import lombok.Data;
 
 @Data
-public class UserSignInDTO {
+public class UserVerifyDTO {
     String name;
     String email;
     String password;
