@@ -25,6 +25,7 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
+    private Role role;
     @JsonIgnore
     private String password_hash;
     private Role role;
@@ -33,8 +34,7 @@ public class User implements UserDetails {
     private String verificationCode;
     private String resetPasswordCode;
     private Boolean verified = false;
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Attachment attachment;
+    private String imageUrl;
     @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<User> followers;
