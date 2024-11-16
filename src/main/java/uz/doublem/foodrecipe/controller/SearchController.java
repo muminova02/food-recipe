@@ -13,6 +13,7 @@ import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.search.SearchDto;
 import uz.doublem.foodrecipe.repository.UserRepository;
 import uz.doublem.foodrecipe.service.SearchService;
+import uz.doublem.foodrecipe.util.Util;
 
 import java.net.URI;
 import java.util.Optional;
@@ -40,9 +41,8 @@ public class SearchController {
 
     @GetMapping("/result/{id}")
     public ResponseEntity<Void> getRecipeInSearchResult(@PathVariable Integer id) {
-//        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        searchService.createRecentSearch(id,byId.get());
+        User user = Util.getCurrentUser();
+        searchService.createRecentSearch(id,user);
 
         URI redirectUri = URI.create("/api/recipeM/" + id);
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();

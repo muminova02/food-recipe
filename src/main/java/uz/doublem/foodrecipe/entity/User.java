@@ -32,7 +32,6 @@ public class User implements UserDetails {
     private Role role;
     @JsonIgnore
     private String password_hash;
-    private Role role;
     private Integer following_count =0;
     private Integer followers_count =0;
     private String verificationCode;
