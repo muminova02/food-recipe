@@ -58,6 +58,7 @@ public class DataLoader implements CommandLineRunner
             u.setPassword_hash(passwordEncoder.encode("root123"));
             u.setEmail("frenky@gmail.com");
             u.setVerificationCode("1234");
+            u.setRole(Role.USER);
             User us = new User();
             us.setName("john");
             us.setVerified(true);
@@ -65,6 +66,7 @@ public class DataLoader implements CommandLineRunner
             us.setEmail("john@gmail.com");
             us.setRole(Role.CHEF);
             us.setVerificationCode("1234");
+            us.setRole(Role.USER);
             userRepository.save(us);
             userRepository.save(user);
             userRepository.save(u);
