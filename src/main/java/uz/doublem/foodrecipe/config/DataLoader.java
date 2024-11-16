@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.enums.Role;
 import uz.doublem.foodrecipe.repository.UserRepository;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class DataLoader implements CommandLineRunner
         if (!userRepository.existsByEmail(s))
         {
             User user = new User();
-//            user.setRole("ADMIN");
+            user.setRole(Role.ADMIN);
             user.setEmail(s);
             user.setName("admin");
             user.setPassword_hash(passwordEncoder.encode("root123"));
@@ -57,12 +58,14 @@ public class DataLoader implements CommandLineRunner
             u.setPassword_hash(passwordEncoder.encode("root123"));
             u.setEmail("frenky@gmail.com");
             u.setVerificationCode("1234");
+            u.setRole(Role.USER);
             User us = new User();
             us.setName("john");
             us.setVerified(true);
             us.setPassword_hash(passwordEncoder.encode("root123"));
             us.setEmail("john@gmail.com");
             us.setVerificationCode("1234");
+            us.setRole(Role.USER);
             userRepository.save(us);
             userRepository.save(user);
             userRepository.save(u);
