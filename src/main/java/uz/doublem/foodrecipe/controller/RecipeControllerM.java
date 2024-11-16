@@ -71,18 +71,16 @@ public class RecipeControllerM {
                                     example = "image.png, or video.mp4"
                             )))
             @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
-//        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.addRecipe(json, attachments, byId.get());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.addRecipe(json, attachments, user);
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
 
     }
 
     @PostMapping("/addOnly")
     public ResponseEntity<?> addRecipeOnly(@RequestBody RecipeDTOaddOnly recipeDTOaddOnly) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.addRecipeOnly(recipeDTOaddOnly, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.addRecipeOnly(recipeDTOaddOnly, user);
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
@@ -156,9 +154,8 @@ public class RecipeControllerM {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRecipe(@PathVariable Integer id) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.getRecipe(id, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.getRecipe(id, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
@@ -172,25 +169,22 @@ public class RecipeControllerM {
 
     @PutMapping("/edit-only")
     public ResponseEntity<?> updateRecipe(@RequestBody UpdateRecipeDto updateRecipeDto) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.updateRecipeOnly(updateRecipeDto, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.updateRecipeOnly(updateRecipeDto, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @PutMapping("/{id}/edit-steps")
     public ResponseEntity<?> updateSteps(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateStepsDto> updateStepsDto) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.updateRecipeSteps(updateStepsDto, recipeId, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.updateRecipeSteps(updateStepsDto, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @PutMapping("/{id}/edit-ingredients")
     public ResponseEntity<?> updateIngredients(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateIngredientDTO> updateIngredientDTOs) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.updateIngredients(updateIngredientDTOs, recipeId, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.updateIngredients(updateIngredientDTOs, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
@@ -215,33 +209,29 @@ public class RecipeControllerM {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRecipe(@PathVariable Integer id) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteRecipe(id, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteRecipe(id, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @DeleteMapping("/{recipeId}/step/{id}")
     public ResponseEntity<?> deleteStep(@PathVariable Integer recipeId, @PathVariable Integer id) {
-//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteStep(id, recipeId, byId.get());
+       User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteStep(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @DeleteMapping("/{recipeId}/ingredient/{id}")
     public ResponseEntity<?> deleteIngredient(@PathVariable Integer recipeId, @PathVariable Integer id) {
-//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteIngredient(id, recipeId, byId.get());
+       User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteIngredient(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @DeleteMapping("/{recipeId}/attachment/{id}")
     public ResponseEntity<?> deleteAttachment(@PathVariable Integer recipeId, @PathVariable String id) {
-//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteAttachment(id, recipeId, byId.get());
+       User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteAttachment(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 

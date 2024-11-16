@@ -20,7 +20,7 @@ spring:
 
 my_token:
   key: abbosdevrtpkglfdsfjkjdfdsfhsdjglk
-  expire_time: 86400000
+  expire_time: 86400000000
 
 
 server:
