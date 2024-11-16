@@ -47,7 +47,7 @@ public class ReviewController_A {
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
     }
 
-    @PostMapping("/like-recipe")
+    @PostMapping("/like-comment")
     public ResponseEntity<?> likeRecipe(@RequestBody ReviewLikeDtoAdd reviewLikeDtoAdd) {
         //        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> byId = userRepository.findById(2);
@@ -62,6 +62,13 @@ public class ReviewController_A {
         Optional<User> byId = userRepository.findById(2);
         ResponseMessage res = service.deleteComment(id, byId.get());
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
+    }
+
+    @GetMapping("/{id}/rate")
+    public ResponseEntity<?> getRate(@PathVariable Integer id) {
+        Optional<User> byId = userRepository.findById(2);
+        ResponseMessage res = service.getReviewRate(id,byId.get());
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 
 

@@ -158,7 +158,7 @@ public class ReviewService_A {
             review.setComment(reviewDto.getComment());
             }
             reviewRepository.save(review);
-            return Util.getResponseMes(true,"commit set to Recipe, and not create Review becouse Review Already created, return reviewId: ",review.getId());
+            return Util.getResponseMes(true,"commit set to Recipe, and not create Review because Review Already created, return reviewId: ",review.getId());
         }
         if (reviewDto.getComment() != null) {
             review.setComment(reviewDto.getComment());
@@ -244,5 +244,13 @@ public class ReviewService_A {
     @Transactional
     protected void deleteLikeReview(Integer id) {
         likeReviewRepository.deleteById(id);
+    }
+
+    public ResponseMessage getReviewRate(Integer id, User user) {
+        Optional<Review> review = reviewRepository.findByRecipe_IdAndUser_id(id, user.getId());
+        if (review.isEmpty()) {
+            return Util.getResponseMes(false,"review not found with this recipe Id : ",id);
+        }
+        return Util.getResponseMes(true,"get review rate successfully ",review.get().getRating());
     }
 }

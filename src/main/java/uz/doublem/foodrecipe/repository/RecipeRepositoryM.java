@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.data.repository.query.Param;
 import uz.doublem.foodrecipe.entity.Recipe;
 
@@ -37,5 +38,9 @@ public interface RecipeRepositoryM extends JpaRepository<Recipe, Integer> {
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
             "FROM Recipe r WHERE r.id = :recipeId AND r.author.id = :userId")
     Boolean isRecipeOwnedByUser(@Param("recipeId") Integer recipeId, @Param("userId") Integer userId);
+
+    Integer countAllByAuthor_Id(Integer authorId);
+
+    Page<Recipe> findAllByAuthor_Id(Integer authorId, Pageable pageable);
 }
 
