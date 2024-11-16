@@ -3,13 +3,14 @@ package uz.doublem.foodrecipe.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.user.UserEditDTO;
 import uz.doublem.foodrecipe.service.UserService;
 import uz.doublem.foodrecipe.util.Util;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -31,5 +32,27 @@ public class UserController {
         System.out.println(id);
         ResponseMessage response = userService.unfollow(id, unFolloweeId);
         return ResponseEntity.status(response.getStatus()?200:400).body(response);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUser(@RequestParam Integer userId){
+//        Integer id = Util.getCurrentUser().getId();
+        System.out.println(userId);
+        ResponseMessage res = userService.getUser(userId);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+    @GetMapping("/profile-content")
+    public ResponseEntity<?> getUserContent(@RequestParam String type, @RequestParam Integer userId,@RequestParam Integer page,@RequestParam Integer size){
+        System.out.println(type);
+        Integer id = Util.getCurrentUser().getId();
+        ResponseMessage res = userService.getContentsByType(type,id,userId,page,size);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUser(@RequestParam Integer size, Integer page){
+        ResponseMessage res = userService.getAllUsers(size,page);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 }

@@ -34,6 +34,7 @@ public class AuthService {
         User user = new User();
         user.setName(userDTO.name());
         user.setEmail(userDTO.email());
+        user.setDescription("");
         user.setPassword_hash(passwordEncoder.encode(userDTO.password()));
         user.setVerificationCodeGeneratedTime(LocalDateTime.now());
         String code = smsService.generateCode();

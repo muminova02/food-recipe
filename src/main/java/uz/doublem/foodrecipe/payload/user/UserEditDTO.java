@@ -9,4 +9,5 @@ public class UserEditDTO {
     private String role;
     private String country;
     private String city;
+    private String description;
 }

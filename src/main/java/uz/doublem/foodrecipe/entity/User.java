@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.w3c.dom.Text;
 import uz.doublem.foodrecipe.enums.Role;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,9 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
+    @Lob
+    private String description;
+    @Enumerated(EnumType.STRING)
     private Role role;
     @JsonIgnore
     private String password_hash;
