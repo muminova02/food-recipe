@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/saved-recipes")
+@RequestMapping("/saved-recipes")
 public class SavedRecipeController {
     final SavedRecipeService savedRecipeService;
     final UserRepository userRepository;

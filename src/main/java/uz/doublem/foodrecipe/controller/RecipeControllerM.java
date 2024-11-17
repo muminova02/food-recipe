@@ -31,7 +31,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Recipe >> ")
-@RequestMapping("/api/recipeM")
+@RequestMapping("/recipeM")
 public class RecipeControllerM {
 
     private final RecipeServiceM recipeServiceM;

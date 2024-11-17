@@ -29,7 +29,7 @@ my_token:
 
 
 server:
-  base-url : http://localhost:8080/api
+  base-url : https://food-recipe-uicr.onrender.com/api
 
 
 photo:

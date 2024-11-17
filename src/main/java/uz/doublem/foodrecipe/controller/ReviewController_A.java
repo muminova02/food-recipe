@@ -13,7 +13,7 @@ import uz.doublem.foodrecipe.util.Util;
 
 
 @RestController
-@RequestMapping("/api/reviewA")
+@RequestMapping("/reviewA")
 @RequiredArgsConstructor
 public class ReviewController_A {
     private final ReviewService_A service;

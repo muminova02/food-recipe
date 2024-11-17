@@ -11,7 +11,7 @@ import uz.doublem.foodrecipe.service.UserService;
 import uz.doublem.foodrecipe.util.Util;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
