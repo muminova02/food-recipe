@@ -33,14 +33,14 @@ public class RecipeServiceM {
     private final AttachmentRepository attachmentRepository;
 
 
-    public ResponseMessage  addRecipe(String json, List<MultipartFile> attachments, User currentUser) {
+    public ResponseMessage  addRecipe(String json, MultipartFile attachments, User currentUser) {
             ResponseMessage response = new ResponseMessage();
             try {
-                if (attachments.isEmpty() || attachments.size() < 2) {
-                    return ResponseMessage.builder().status(false)
-                            .text("1 ta Rasim va 1 ta Video yuboring")
-                            .data(new RuntimeException("wrong with attachment")).build();
-                }
+//                if (attachments.isEmpty() || attachments.size() < 2) {
+//                    return ResponseMessage.builder().status(false)
+//                            .text("1 ta Rasim va 1 ta Video yuboring")
+//                            .data(new RuntimeException("wrong with attachment")).build();
+//                }
 
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
 
@@ -73,7 +73,7 @@ public class RecipeServiceM {
                 notificationService.createNotificationTwo(recipe, currentUser);
                 response.setText(response.getText() + " >> Finally successfully saved");
                 response.setStatus(true);
-                response.setData(recipeDTO);
+                response.setData(recipe.getId());
                 return response;
 
             } catch (Exception e) {
@@ -100,24 +100,31 @@ public class RecipeServiceM {
             String fullTitle = title + "_&" + id;
             String link = "http://localhost:8080/api/recipeM/link/" + fullTitle;
             recipe.setLink(link);
+            recipe.setVideoUrl(recipeDTO.getVideoUrl());
             recipeRepositoryM.save(recipe);
             return true;
         }
 
 
-        private void addAttachmentsToRecipe(List<MultipartFile> attachments, Recipe recipe) {
-            Attachment attachment = attachmentService.save(attachments.get(0));
-            Attachment attachment2 = attachmentService.save(attachments.get(1));
+//        private void addAttachmentsToRecipe(List<MultipartFile> attachments, Recipe recipe) {
+//            Attachment attachment = attachmentService.save(attachments.get(0));
+//            Attachment attachment2 = attachmentService.save(attachments.get(1));
+//
+//            if (attachment.getType().startsWith("image")) {
+//                recipe.setImageUrl(attachment.getUrl());
+//                recipe.setVideoUrl(attachment2.getUrl());
+//            } else {
+//                recipe.setVideoUrl(attachment.getUrl());
+//                recipe.setImageUrl(attachment2.getUrl());
+//            }
+//            recipeRepositoryM.save(recipe);
+//        }
 
-            if (attachment.getType().startsWith("image")) {
-                recipe.setImageUrl(attachment.getUrl());
-                recipe.setVideoUrl(attachment2.getUrl());
-            } else {
-                recipe.setVideoUrl(attachment.getUrl());
-                recipe.setImageUrl(attachment2.getUrl());
-            }
-            recipeRepositoryM.save(recipe);
-        }
+    private void addAttachmentsToRecipe(MultipartFile attachments, Recipe recipe) {
+        Attachment attachment = attachmentService.save(attachments);
+        recipe.setImageUrl(attachment.getUrl());
+        recipeRepositoryM.save(recipe);
+    }
 
 
     private boolean saveStepsList(Recipe saveRecipe2, List<StepsDTOAdd> stepDTOList) {
@@ -214,13 +221,13 @@ public class RecipeServiceM {
         }
     }
 
-    public ResponseMessage upload(List<MultipartFile> attachments,Integer recipeId) {
+    public ResponseMessage upload(MultipartFile attachments,Integer recipeId) {
 
-        if (attachments.isEmpty() || attachments.size() < 2) {
-            return ResponseMessage.builder().status(false)
-                    .text("1 ta Rasim va 1 ta Video yuboring")
-                    .data(new RuntimeException("wrong with attachment")).build();
-        }
+//        if (attachments.isEmpty() || attachments.size() < 2) {
+//            return ResponseMessage.builder().status(false)
+//                    .text("1 ta Rasim va 1 ta Video yuboring")
+//                    .data(new RuntimeException("wrong with attachment")).build();
+//        }
         Optional<Recipe> byId = recipeRepositoryM.findById(recipeId);
         if (byId.isPresent()) {
             addAttachmentsToRecipe(attachments,byId.get());

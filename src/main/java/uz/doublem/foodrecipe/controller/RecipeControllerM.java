@@ -41,7 +41,7 @@ public class RecipeControllerM {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "201",
-                    description = "If successfully created you get  status '201'",
+                    description = "If successfully created you get  status '201' and we returned RecipeID",
                     content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseMessage.class))
                     }
@@ -63,14 +63,14 @@ public class RecipeControllerM {
             )
             @RequestPart(value = "json") String json,
             @Parameter(
-                    description = "Select picture on format .jpg or .png or .svg or video on format .mp4, .avi, .mov",
+                    description = "Select picture on format .jpg or .png or .svg ",
                     content = @Content(mediaType = "multipart/form-data",
                             schema = @Schema(
                                     type = "string",
                                     format = "binary",
-                                    example = "image.png, or video.mp4"
+                                    example = "image.png"
                             )))
-            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
+            @RequestPart(name = "file", required = false) MultipartFile attachments) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res = recipeServiceM.addRecipe(json, attachments, user);
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
@@ -114,24 +114,24 @@ public class RecipeControllerM {
     }
 
 
-    @Operation(summary = "Upload photo and Video to recipe ")
-    @PostMapping(value = "/{id}/attachments", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE
-    })
-    public ResponseEntity<?> upload(
-            @PathVariable Integer id,
-            @Parameter(
-                    description = "Select picture on format .jpg or .png and .svg or video on format .mp4, .avi, .mov for video,",
-                    content = @Content(mediaType = "multipart/form-data",
-                            schema = @Schema(
-                                    type = "string",
-                                    format = "binary",
-                                    example = "image.png, or video.mp4"
-                            )))
-            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
-        ResponseMessage res = recipeServiceM.upload(attachments, id);
-        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
-    }
+//    @Operation(summary = "Upload photo and Video to recipe ")
+//    @PostMapping(value = "/{id}/attachments", consumes = {
+//            MediaType.MULTIPART_FORM_DATA_VALUE
+//    })
+//    public ResponseEntity<?> upload(
+//            @PathVariable Integer id,
+//            @Parameter(
+//                    description = "Select picture on format .jpg or .png and .svg or video on format .mp4, .avi, .mov for video,",
+//                    content = @Content(mediaType = "multipart/form-data",
+//                            schema = @Schema(
+//                                    type = "string",
+//                                    format = "binary",
+//                                    example = "image.png, or video.mp4"
+//                            )))
+//            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
+//        ResponseMessage res = recipeServiceM.upload(attachments, id);
+//        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+//    }
 
 
     @PostMapping("/{id}/steps")

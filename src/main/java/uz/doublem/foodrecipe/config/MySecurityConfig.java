@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,10 +19,10 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class MySecurityConfig {
     private final MyFilter myFilter;
-    private final UserRepository userRepository;
+    private final MyUserConfig myUserConfig;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -33,7 +34,7 @@ public class MySecurityConfig {
                http.addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
                .csrf((c)-> c.disable())
                        .cors((cr)-> cr.disable())
-                       .userDetailsService(userDetailsService())
+                       .userDetailsService(myUserConfig)
                        .authorizeRequests()
                        .requestMatchers("/auth/**","/swagger-ui/**",
                                "/v3/api-docs/**","/api/**")
@@ -43,10 +44,10 @@ public class MySecurityConfig {
 
         return http.build();
     }
-    @Bean
-    public UserDetailsService userDetailsService(){
-            UserDetailsService userDetails = (email)->
-            userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("user not found!"));
-        return userDetails;
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(){
+//            UserDetailsService userDetails = (email)->
+//            userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("user not found!"));
+//        return userDetails;
+//    }
 }

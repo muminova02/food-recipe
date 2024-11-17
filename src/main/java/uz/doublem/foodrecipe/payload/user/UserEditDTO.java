@@ -6,6 +6,7 @@ import lombok.Data;
 public class UserEditDTO {
     private Integer id;
     private String name;
+    private String email;
     private String role;
     private String country;
     private String city;
