@@ -267,7 +267,7 @@ public class RecipeServiceM {
         if (b) {
             return getResponseMes(true,"recipe add successfully",recipeDTOaddOnly);
         }
-        return getResponseMes(false,"recipe not added",recipeDTOaddOnly);
+        return getResponseMes(false,"category not found",recipeDTOaddOnly);
     }
 
     public ResponseMessage getRecipe(Integer id, User user) {

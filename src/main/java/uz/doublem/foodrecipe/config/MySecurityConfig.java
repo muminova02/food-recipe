@@ -36,6 +36,7 @@ public class MySecurityConfig {
                        .userDetailsService(userDetailsService())
                        .authorizeRequests()
                        .requestMatchers("/auth/**","/swagger-ui/**",
+                               "/api/**",
                                "/v3/api-docs/**")
                        .permitAll()
                        .anyRequest()
