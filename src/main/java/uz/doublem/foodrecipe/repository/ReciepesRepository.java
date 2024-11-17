@@ -1,6 +1,6 @@
 package uz.doublem.foodrecipe.repository;
 
-import feign.Param;
+
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
