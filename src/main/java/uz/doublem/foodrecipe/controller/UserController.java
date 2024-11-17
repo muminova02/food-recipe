@@ -43,10 +43,9 @@ public class UserController {
     }
 
     @GetMapping("/profile-content")
-    public ResponseEntity<?> getUserContent(@RequestParam String type, @RequestParam Integer userId,@RequestParam Integer page,@RequestParam Integer size){
-        System.out.println(type);
+    public ResponseEntity<?> getUserContent( @RequestParam Integer userId,@RequestParam Integer page,@RequestParam Integer size){
         Integer id = Util.getCurrentUser().getId();
-        ResponseMessage res = userService.getContentsByType(type,id,userId,page,size);
+        ResponseMessage res = userService.getContentsByType(id,userId,page,size);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 
