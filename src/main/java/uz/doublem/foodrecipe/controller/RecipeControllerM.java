@@ -31,7 +31,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Recipe >> ")
-@RequestMapping("/api/recipeM")
+@RequestMapping("/recipeM")
 public class RecipeControllerM {
 
     private final RecipeServiceM recipeServiceM;
@@ -41,7 +41,7 @@ public class RecipeControllerM {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "201",
-                    description = "If successfully created you get  status '201'",
+                    description = "If successfully created you get  status '201' and we returned RecipeID",
                     content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseMessage.class))
                     }
@@ -63,26 +63,24 @@ public class RecipeControllerM {
             )
             @RequestPart(value = "json") String json,
             @Parameter(
-                    description = "Select picture on format .jpg or .png or .svg or video on format .mp4, .avi, .mov",
+                    description = "Select picture on format .jpg or .png or .svg ",
                     content = @Content(mediaType = "multipart/form-data",
                             schema = @Schema(
                                     type = "string",
                                     format = "binary",
-                                    example = "image.png, or video.mp4"
+                                    example = "image.png"
                             )))
-            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
-//        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.addRecipe(json, attachments, byId.get());
+            @RequestPart(name = "file", required = false) MultipartFile attachments) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.addRecipe(json, attachments, user);
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
 
     }
 
     @PostMapping("/addOnly")
     public ResponseEntity<?> addRecipeOnly(@RequestBody RecipeDTOaddOnly recipeDTOaddOnly) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.addRecipeOnly(recipeDTOaddOnly, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.addRecipeOnly(recipeDTOaddOnly, user);
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
@@ -116,24 +114,24 @@ public class RecipeControllerM {
     }
 
 
-    @Operation(summary = "Upload photo and Video to recipe ")
-    @PostMapping(value = "/{id}/attachments", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE
-    })
-    public ResponseEntity<?> upload(
-            @PathVariable Integer id,
-            @Parameter(
-                    description = "Select picture on format .jpg or .png and .svg or video on format .mp4, .avi, .mov for video,",
-                    content = @Content(mediaType = "multipart/form-data",
-                            schema = @Schema(
-                                    type = "string",
-                                    format = "binary",
-                                    example = "image.png, or video.mp4"
-                            )))
-            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
-        ResponseMessage res = recipeServiceM.upload(attachments, id);
-        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
-    }
+//    @Operation(summary = "Upload photo and Video to recipe ")
+//    @PostMapping(value = "/{id}/attachments", consumes = {
+//            MediaType.MULTIPART_FORM_DATA_VALUE
+//    })
+//    public ResponseEntity<?> upload(
+//            @PathVariable Integer id,
+//            @Parameter(
+//                    description = "Select picture on format .jpg or .png and .svg or video on format .mp4, .avi, .mov for video,",
+//                    content = @Content(mediaType = "multipart/form-data",
+//                            schema = @Schema(
+//                                    type = "string",
+//                                    format = "binary",
+//                                    example = "image.png, or video.mp4"
+//                            )))
+//            @RequestPart(name = "file", required = false) List<MultipartFile> attachments) {
+//        ResponseMessage res = recipeServiceM.upload(attachments, id);
+//        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
+//    }
 
 
     @PostMapping("/{id}/steps")
@@ -156,9 +154,8 @@ public class RecipeControllerM {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRecipe(@PathVariable Integer id) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.getRecipe(id, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.getRecipe(id, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
@@ -172,25 +169,22 @@ public class RecipeControllerM {
 
     @PutMapping("/edit-only")
     public ResponseEntity<?> updateRecipe(@RequestBody UpdateRecipeDto updateRecipeDto) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.updateRecipeOnly(updateRecipeDto, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.updateRecipeOnly(updateRecipeDto, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @PutMapping("/{id}/edit-steps")
     public ResponseEntity<?> updateSteps(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateStepsDto> updateStepsDto) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.updateRecipeSteps(updateStepsDto, recipeId, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.updateRecipeSteps(updateStepsDto, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @PutMapping("/{id}/edit-ingredients")
     public ResponseEntity<?> updateIngredients(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateIngredientDTO> updateIngredientDTOs) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.updateIngredients(updateIngredientDTOs, recipeId, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.updateIngredients(updateIngredientDTOs, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
@@ -215,33 +209,29 @@ public class RecipeControllerM {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRecipe(@PathVariable Integer id) {
-        //       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteRecipe(id, byId.get());
+               User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteRecipe(id, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @DeleteMapping("/{recipeId}/step/{id}")
     public ResponseEntity<?> deleteStep(@PathVariable Integer recipeId, @PathVariable Integer id) {
-//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteStep(id, recipeId, byId.get());
+       User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteStep(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @DeleteMapping("/{recipeId}/ingredient/{id}")
     public ResponseEntity<?> deleteIngredient(@PathVariable Integer recipeId, @PathVariable Integer id) {
-//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteIngredient(id, recipeId, byId.get());
+       User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteIngredient(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
     @DeleteMapping("/{recipeId}/attachment/{id}")
     public ResponseEntity<?> deleteAttachment(@PathVariable Integer recipeId, @PathVariable String id) {
-//       User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res = recipeServiceM.deleteAttachment(id, recipeId, byId.get());
+       User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res = recipeServiceM.deleteAttachment(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 

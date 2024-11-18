@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/saved-recipes")
+@RequestMapping("/saved-recipes")
 public class SavedRecipeController {
     final SavedRecipeService savedRecipeService;
     final UserRepository userRepository;
@@ -22,16 +22,14 @@ public class SavedRecipeController {
 
     @GetMapping
     public ResponseEntity<?> getSavedRecipes(@RequestParam Integer size, @RequestParam Integer page ) {
-//        User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-       ResponseMessage res= savedRecipeService.getSavedRecipes(byId.get(),size, page);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       ResponseMessage res= savedRecipeService.getSavedRecipes(user,size, page);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
     @PostMapping
     public ResponseEntity<?> createSavedRecipe(@RequestParam Integer recipeId ) {
-        // User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        ResponseMessage res= savedRecipeService.createSavedRecipes(byId.get(),recipeId);
+         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage res= savedRecipeService.createSavedRecipes(user,recipeId);
 
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
@@ -39,9 +37,8 @@ public class SavedRecipeController {
 
     @DeleteMapping
     public void deleteById(@RequestParam Integer recipeId ) {
-        // User curentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Optional<User> byId = userRepository.findById(2);
-        savedRecipeService.unSaveRecipe(recipeId,byId.get());
+         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        savedRecipeService.unSaveRecipe(recipeId,user);
     }
 
 

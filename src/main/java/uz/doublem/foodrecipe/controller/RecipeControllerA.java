@@ -9,7 +9,7 @@ import uz.doublem.foodrecipe.service.RecipeService_A;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/recipeA")
+@RequestMapping("/recipeA")
 public class RecipeControllerA {
 
     final RecipeService_A service;

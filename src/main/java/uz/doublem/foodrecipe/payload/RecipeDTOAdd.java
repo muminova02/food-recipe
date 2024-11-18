@@ -18,6 +18,7 @@ public class RecipeDTOAdd {
     String description;
     Integer category_id;
     String cookingTime;
+    String videoUrl;
 
     List<IngredientDTOAdd> ingredientList;
 

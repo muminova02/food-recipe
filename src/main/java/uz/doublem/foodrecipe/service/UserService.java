@@ -15,6 +15,8 @@ import uz.doublem.foodrecipe.payload.user.*;
 import uz.doublem.foodrecipe.repository.LocationRepository;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
 import uz.doublem.foodrecipe.repository.UserRepository;
+import uz.doublem.foodrecipe.util.Util;
+
 import static uz.doublem.foodrecipe.util.Util.*;
 
 import java.util.List;
@@ -115,12 +117,10 @@ public class UserService {
         return getResponseMes(true,"user details for profile",build);
     }
 
-    public ResponseMessage getContentsByType(String type, Integer id, Integer userId, Integer page, Integer size) {
-        if (type.equals("recipe")){
+    public ResponseMessage getContentsByType(Integer id, Integer userId, Integer page, Integer size) {
             if (id==null || userId == null){
                 throw new RuntimeException("id or userId is null");
             }
-            if (id.equals(userId)){
                 PageRequest pageRequest = PageRequest.of(page, size);
                 Page<Recipe> allByAuthorId = recipeRepositoryM.findAllByAuthor_Id(userId, pageRequest);
                 List<SavedResponseDto> recipeList = allByAuthorId.getContent().stream().map(recipe ->{
@@ -134,9 +134,8 @@ public class UserService {
                             .time(recipe.getCookingTime())
                             .build();
                 }).toList();
-            }
-        }
-        return null;
+
+        return getResponseMes(true,"recipe list for user",recipeList);
     }
 
     public ResponseMessage getAllUsers(Integer size, Integer page) {

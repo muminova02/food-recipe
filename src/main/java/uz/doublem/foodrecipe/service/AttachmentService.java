@@ -179,7 +179,7 @@ public class AttachmentService
         attachment.setName(originalFileName);
         attachment.setPath(filePath.toFile().getAbsolutePath());
         attachment.setType(file.getContentType());
-        attachment.setUrl(baseUrl + "/id/" + attachment.getId());
+        attachment.setUrl(baseUrl + "/attachment/id/" + attachment.getId());
     }
 
     public void deleteFromFile(String filePath) throws IOException
