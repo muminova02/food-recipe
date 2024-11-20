@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -24,8 +25,8 @@ import java.util.Optional;
 public class SearchController {
 
     private final SearchService searchService;
-    private final UserRepository userRepository;
 
+    @PreAuthorize("authentication.name == principal.username")
     @GetMapping
     public ResponseEntity<?> getResentSearch(@RequestParam Integer size,@RequestParam Integer page, @RequestParam Integer userId) {
         ResponseMessage res = searchService.getResentSearch(size,page,userId);
@@ -38,7 +39,7 @@ public class SearchController {
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 
-
+    @PreAuthorize("authentication.name == principal.username")
     @GetMapping("/result/{id}")
     public ResponseEntity<Void> getRecipeInSearchResult(@PathVariable Integer id) {
         User user = Util.getCurrentUser();

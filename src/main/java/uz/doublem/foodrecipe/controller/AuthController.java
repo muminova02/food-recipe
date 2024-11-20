@@ -2,6 +2,7 @@ package uz.doublem.foodrecipe.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.doublem.foodrecipe.payload.*;
 import uz.doublem.foodrecipe.payload.user.UserDTO;
@@ -16,28 +17,33 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-in")
-    public ResponseMessage signIn(@RequestBody UserSignInDTO userSignInDTO){
-        return authService.signIn(userSignInDTO);
+    public ResponseEntity<?> signIn(@RequestBody UserSignInDTO userSignInDTO){
+        ResponseMessage responseMessage = authService.signIn(userSignInDTO);
+        return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
     @SneakyThrows
     @PostMapping("/sign-up")
-    public ResponseMessage signUp(@RequestBody UserDTO userDTO){
-
-        return authService.signUp(userDTO);
+    public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO){
+        ResponseMessage responseMessage = authService.signUp(userDTO);
+        return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
 
     @PostMapping("/verify")
-    public ResponseMessage verify(@RequestBody UserVerifyDTO userSignInDTO){
-       return authService.verify(userSignInDTO);
+    public ResponseEntity<?> verify(@RequestBody UserVerifyDTO userVerifyDTO){
+        ResponseMessage verify = authService.verify(userVerifyDTO);
+        return ResponseEntity.status(verify.getStatus()?200:400).body(verify);
     }
 
     @PostMapping("/request-password-reset")
-    public ResponseMessage requestPass(@RequestParam String email){
-       return authService.requestPasswordReset(email);
+    public ResponseEntity<?> requestPass(@RequestParam String email){
+
+        ResponseMessage responseMessage = authService.requestPasswordReset(email);
+        return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
 
     @PostMapping("/reset-password")
-    public ResponseMessage resetPass(@RequestBody ResetPasswordDTO resetPasswordDTO){
-       return authService.resetPassword(resetPasswordDTO);
+    public ResponseEntity<?> resetPass(@RequestBody ResetPasswordDTO resetPasswordDTO){
+        ResponseMessage responseMessage = authService.resetPassword(resetPasswordDTO);
+        return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
 }

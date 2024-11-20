@@ -1,5 +1,6 @@
 package uz.doublem.foodrecipe.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import uz.doublem.foodrecipe.config.JwtProvider;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.enums.Role;
 import uz.doublem.foodrecipe.payload.ResetPasswordDTO;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.user.UserDTO;
@@ -25,17 +27,18 @@ public class AuthService {
     @SneakyThrows
     @PostMapping
     public ResponseMessage signUp(UserDTO userDTO){
-        if (userRepository.existsByEmail(userDTO.email())) {
-            return ResponseMessage.builder()
-                    .status(false).
-                    text("username already in use!")
-                    .data(new RuntimeException()).build();
+        if (userDTO.role().name().equals("ADMIN")){
+            throw new RuntimeException("Only the boss or user can be chosen for the role!");
         }
+        if (userRepository.existsByEmail(userDTO.email())) {
+            throw new RuntimeException("username already in use!");
+        }
+        System.out.println(userDTO);
         User user = new User();
         user.setName(userDTO.name());
         user.setEmail(userDTO.email());
-        user.setDescription("");
         user.setPassword_hash(passwordEncoder.encode(userDTO.password()));
+        user.setRole(userDTO.role());
         user.setVerificationCodeGeneratedTime(LocalDateTime.now());
         String code = smsService.generateCode();
         user.setVerificationCode(code);
@@ -64,7 +67,7 @@ public class AuthService {
         String token = jwtProvider.generateToken(user);
         return ResponseMessage.builder().status(true).data(token).text("your token ").build();
     }
-
+    @Transactional
     public ResponseMessage verify(UserVerifyDTO userverifyDTO){
         LocalDateTime time = LocalDateTime.now();
         User user = userRepository.findByEmail(userverifyDTO.getEmail()).orElseThrow(() -> new RuntimeException("user not found!"));
@@ -77,7 +80,7 @@ public class AuthService {
                         .text("confimation code not found").build();
                             }
         }
-        if (generetedCodeTime.plusMinutes(5).isBefore(time)){
+        if (generetedCodeTime.plusMinutes(10).isBefore(time)){
             return   ResponseMessage.builder()
                     .status(false)
                     .data("error")
@@ -90,7 +93,7 @@ public class AuthService {
         }
         user.setVerified(true);
         userRepository.save(user);
-        return ResponseMessage.builder().status(true).data(user).build();
+        return ResponseMessage.builder().status(true).data(userverifyDTO).build();
     }
 
 
@@ -100,7 +103,7 @@ public class AuthService {
         user.setResetPasswordCode(code);
         user.setResetPasswordCodeGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
-        smsService.sendSmsToUser(email, smsService.generateCode());
+        smsService.sendSmsToUser(email, code);
         return ResponseMessage.builder().status(true).data(email).text("Reset code sent to your email").build();
     }
 
@@ -112,8 +115,8 @@ public class AuthService {
         if (!user.getResetPasswordCode().equals(resetPasswordDTO.getCode())) {
             throw new RuntimeException("Reset password code is incorrect.");
         }
-        if (LocalDateTime.now().isAfter(user.getResetPasswordCodeGeneratedTime().plusMinutes(2))){
-            throw new RuntimeException("time expired or verification code incorrect");
+        if (LocalDateTime.now().isAfter(user.getResetPasswordCodeGeneratedTime().plusMinutes(10))){
+            throw new RuntimeException("time expired");
         }
         user.setPassword_hash(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
         userRepository.save(user);

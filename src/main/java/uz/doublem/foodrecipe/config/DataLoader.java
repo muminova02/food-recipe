@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import uz.doublem.foodrecipe.entity.User;
@@ -66,9 +68,8 @@ public class DataLoader implements CommandLineRunner
             us.setEmail("john@gmail.com");
             us.setRole(Role.CHEF);
             us.setVerificationCode("1234");
-            us.setRole(Role.USER);
-            userRepository.save(us);
             userRepository.save(user);
+            userRepository.save(us);
             userRepository.save(u);
         }
 

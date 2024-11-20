@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.Attachment;
@@ -31,7 +32,7 @@ import java.util.List;
 public class AttachmentController
 {
     private final AttachmentService attachmentService;
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Upload photo  or Video to server - Загрузить фото на сервер")
     @PostMapping(consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
@@ -83,6 +84,7 @@ public class AttachmentController
     @Parameters({
             @Parameter(name = "id", description = "Show 'id' in url path for which attachment is updated ", required = true),
     })
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateAttachment(
             @PathVariable(name = "id")
@@ -99,7 +101,7 @@ public class AttachmentController
     {
         return ResponseEntity.status(200).body(attachmentService.update(id, newAttachment));
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete photo or video from table and also file system")
     public ResponseEntity<?> deleteAttachment(

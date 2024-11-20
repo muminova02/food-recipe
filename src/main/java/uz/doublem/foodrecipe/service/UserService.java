@@ -33,7 +33,6 @@ public class UserService {
         Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
         user.setName(editDTO.getName());
         user.setRole(Role.valueOf(editDTO.getRole()));
-        user.setDescription(editDTO.getDescription()!=null?editDTO.getDescription():"");
         if (optionalLocation.isEmpty()){
             Location location = new Location();
             location.setCountry(editDTO.getCountry());
@@ -106,7 +105,6 @@ public class UserService {
         Integer countRecipe = recipeRepositoryM.countAllByAuthor_Id(user.getId());
         ProfileDto build = ProfileDto.builder()
                 .userId(user.getId())
-                .description(user.getDescription())
                 .userName(user.getName())
                 .userRole(user.getRole().name())
                 .authorImg(user.getImageUrl())

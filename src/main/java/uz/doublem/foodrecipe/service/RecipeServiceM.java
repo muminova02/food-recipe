@@ -43,7 +43,9 @@ public class RecipeServiceM {
 //                }
 
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
-
+                if (currentUser.getLocation() == null){
+                    throw new RuntimeException("First, specify your location. To do this, you can go to the edit user section ");
+                }
                 Recipe recipe = new Recipe();
                 boolean b = saveRecipeOnly(recipeDTO, recipe, currentUser);
                 if (!b) {
@@ -262,6 +264,9 @@ public class RecipeServiceM {
         return getResponseMes(true,"ingredients add to recipe",ingredientDTOAdds);
     }
     public ResponseMessage addRecipeOnly(RecipeDTOaddOnly recipeDTOaddOnly,User user) {
+        if (user.getLocation() == null){
+            throw new RuntimeException("First, specify your location. To do this, you can go to the edit user section ");
+        }
         Recipe recipe = new Recipe();
         RecipeDTOAdd recipeDTOAdd = RecipeDTOAdd.builder()
                 .title(recipeDTOaddOnly.getTitle())

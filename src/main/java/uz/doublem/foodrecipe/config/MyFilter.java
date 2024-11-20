@@ -25,10 +25,9 @@ import java.util.Base64;
 @Component
 public class MyFilter extends OncePerRequestFilter {
     @Autowired
-    @Lazy
-    private UserDetailsService userDetailsService;
-    @Autowired
     private JwtProvider jwtProvider;
+    private final MyUserConfig myUserConfig;
+//    private final UserDetailsService myUserConfig;
     @Lazy
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -40,7 +39,6 @@ public class MyFilter extends OncePerRequestFilter {
 if (authorization.startsWith("Bearer ")){
     String substring = authorization.substring(7);
     String email =jwtProvider.getSubject(substring);
-    System.out.println(email);
     setAuthenticationToContext(email);
 }}
        catch (Exception e){
@@ -48,8 +46,9 @@ if (authorization.startsWith("Bearer ")){
        }
        filterChain.doFilter(request,response);
     }
-    public void setAuthenticationToContext(String username){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    public void setAuthenticationToContext(String email){
+        UserDetails userDetails = myUserConfig.loadUserByUsername(email);
+        System.out.println("contextga joynalnmoqda...");
         UsernamePasswordAuthenticationToken authUser = new UsernamePasswordAuthenticationToken(
                 userDetails,
                     null,
@@ -58,11 +57,11 @@ userDetails.getAuthorities()
         SecurityContextHolder.getContext().setAuthentication(authUser);
     }
 
-    public void setAuthenticationToContext(String email, String password){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        if (!userDetails.getPassword().matches(password)){
-            throw new BadCredentialsException("Wrong password or username!");
-        }
-         setAuthenticationToContext(email);
-    }
+//    public void setAuthenticationToContext(String email, String password){
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+//        if (!userDetails.getPassword().matches(password)){
+//            throw new BadCredentialsException("Wrong password or username!");
+//        }
+//         setAuthenticationToContext(email);
+//    }
 }
