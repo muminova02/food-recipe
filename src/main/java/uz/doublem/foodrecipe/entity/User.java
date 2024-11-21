@@ -15,7 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -29,7 +30,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 //    @Lob
-//    private String description;
+    private String description;
     @Enumerated(EnumType.STRING)
     private Role role;
     @JsonIgnore
@@ -43,6 +44,7 @@ public class User implements UserDetails {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
+    @ToString.Exclude
     private Set<User> followers;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -137,9 +139,6 @@ public class User implements UserDetails {
         return id != null ? id.hashCode() : 0;
     }
 
-    public String getImageUrl() {
-        return null;
-    }
     @Override
     public String toString() {
         return "User{id=" + id + ", name='" + name + "', email='" + email + "', role=" + role + "}";
