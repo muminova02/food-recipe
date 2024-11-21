@@ -15,7 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,7 +29,7 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
-    @Lob
+//    @Lob
     private String description;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -40,8 +41,10 @@ public class User implements UserDetails {
     private String resetPasswordCode;
     private Boolean verified = false;
     private String imageUrl;
-    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
+    @ToString.Exclude
     private Set<User> followers;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -67,29 +70,57 @@ public class User implements UserDetails {
         return email;
     }
 
+
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
     public Boolean follow(User userToFollow) {
+        // Проверяем, не подписан ли уже пользователь
         if (!this.followers.contains(userToFollow)) {
+            // Добавляем пользователя в followers текущего пользователя
             this.followers.add(userToFollow);
+
+            // Добавляем текущего пользователя в список подписчиков у userToFollow
             userToFollow.addFollower(this);
+
+            // Увеличиваем счетчик подписок
             this.following_count++;
-            userToFollow.following_count++;
+            userToFollow.followers_count++;
+
+            // Возвращаем true, если подписка успешна
             return true;
         }
+        // Если уже подписан, возвращаем false
         return false;
     }
 
+    private void addFollower(User user) {
+        if (!this.followers.contains(user)) {
+            this.followers.add(user);
+        }
+    }
+
     public Boolean unfollow(User userToUnfollow) {
+        // Проверяем, был ли этот пользователь в списке подписчиков
         if (this.followers.contains(userToUnfollow)) {
+            // Удаляем пользователя из followers текущего пользователя
             this.followers.remove(userToUnfollow);
+
+            // Удаляем текущего пользователя из списка подписчиков у userToUnfollow
             userToUnfollow.removeFollower(this);
+
+            // Уменьшаем счетчик подписок
             this.following_count--;
-            userToUnfollow.following_count--;
+            userToUnfollow.followers_count--;
+
+            // Возвращаем true, если отписка успешна
             return true;
         }
+        // Если не был подписан, возвращаем false
         return false;
-    }
-    private void addFollower(User user) {
-        this.followers.add(user);
     }
 
     private void removeFollower(User user) {
@@ -108,7 +139,8 @@ public class User implements UserDetails {
         return id != null ? id.hashCode() : 0;
     }
 
-    public String getImageUrl() {
-        return null;
+    @Override
+    public String toString() {
+        return "User{id=" + id + ", name='" + name + "', email='" + email + "', role=" + role + "}";
     }
 }

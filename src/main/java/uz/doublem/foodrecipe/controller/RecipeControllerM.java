@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,6 @@ import java.util.Optional;
 public class RecipeControllerM {
 
     private final RecipeServiceM recipeServiceM;
-    private final UserRepository userRepository;
 
     @Operation(summary = "Recipe qo'shish")
     @ApiResponses(value = {
@@ -52,7 +51,7 @@ public class RecipeControllerM {
                             schema = @Schema(implementation = ResponseMessage.class)))
     })
 
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PostMapping(value = "/addOne", consumes = {"multipart/form-data"})
     public ResponseEntity<?> addRecipe(
             @Parameter(
@@ -76,7 +75,7 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
 
     }
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PostMapping("/addOnly")
     public ResponseEntity<?> addRecipeOnly(@RequestBody RecipeDTOaddOnly recipeDTOaddOnly) {
                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -84,13 +83,13 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/category")
     public ResponseEntity<?> addCategoryList(@RequestBody List<CategoryDto> categoryDtoList) {
         ResponseMessage res = recipeServiceM.addCategoryList(categoryDtoList);
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/ingredient", consumes = {"multipart/form-data"})
     public ResponseEntity<?> addIngredientList(
             @Parameter(
@@ -133,7 +132,7 @@ public class RecipeControllerM {
 //        return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
 //    }
 
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PostMapping("/{id}/steps")
     public ResponseEntity<?> addStepsList(
             @PathVariable Integer id,
@@ -142,7 +141,7 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 201 : 400).body(res);
     }
 
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PostMapping("/{id}/ingredients")
     public ResponseEntity<?> addIngredientListToRecipe(
             @PathVariable Integer id,
@@ -159,35 +158,35 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
-    @GetMapping("/link/{url}")
+    @GetMapping("/api/link/{url}")
     public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url) {
         Integer recipeId = recipeServiceM.checkRecipeLink(url);
-        URI redirectUri = URI.create("/api/recipeM/" + recipeId);
+        URI redirectUri = URI.create("/recipeM/" + recipeId);
 
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PutMapping("/edit-only")
     public ResponseEntity<?> updateRecipe(@RequestBody UpdateRecipeDto updateRecipeDto) {
                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res = recipeServiceM.updateRecipeOnly(updateRecipeDto, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PutMapping("/{id}/edit-steps")
     public ResponseEntity<?> updateSteps(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateStepsDto> updateStepsDto) {
                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res = recipeServiceM.updateRecipeSteps(updateStepsDto, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @PutMapping("/{id}/edit-ingredients")
     public ResponseEntity<?> updateIngredients(@PathVariable("id") Integer recipeId, @RequestBody List<UpdateIngredientDTO> updateIngredientDTOs) {
                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res = recipeServiceM.updateIngredients(updateIngredientDTOs, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @Operation(summary = "Change photo or Video for recipe ")
     @PutMapping(value = "/{id}/attachments", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
@@ -207,6 +206,7 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRecipe(@PathVariable Integer id) {
                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -214,6 +214,7 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @DeleteMapping("/{recipeId}/step/{id}")
     public ResponseEntity<?> deleteStep(@PathVariable Integer recipeId, @PathVariable Integer id) {
        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -221,13 +222,14 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @DeleteMapping("/{recipeId}/ingredient/{id}")
     public ResponseEntity<?> deleteIngredient(@PathVariable Integer recipeId, @PathVariable Integer id) {
        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res = recipeServiceM.deleteIngredient(id, recipeId, user);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_CHEF')")
     @DeleteMapping("/{recipeId}/attachment/{id}")
     public ResponseEntity<?> deleteAttachment(@PathVariable Integer recipeId, @PathVariable String id) {
        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -235,25 +237,25 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/category")
     public ResponseEntity<?> editCategory(@RequestBody CategoryEditDto categoryDto) {
         ResponseMessage res = recipeServiceM.editCategory(categoryDto);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/ingredient")
     public ResponseEntity<?> editIngredient(@RequestBody IngredientEditDto ingredientEditDto) {
         ResponseMessage res = recipeServiceM.editIngredient(ingredientEditDto);
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/category/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer id) {
         ResponseMessage res = recipeServiceM.deleteCategory(id);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/ingredient/{id}")
     public ResponseEntity<?> deleteIngredient(@PathVariable Integer id) {
         ResponseMessage res = recipeServiceM.deleteIngredientAdmin(id);

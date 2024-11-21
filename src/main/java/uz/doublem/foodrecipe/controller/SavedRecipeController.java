@@ -2,6 +2,7 @@ package uz.doublem.foodrecipe.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.doublem.foodrecipe.entity.User;
@@ -19,7 +20,7 @@ public class SavedRecipeController {
     final UserRepository userRepository;
 
 
-
+    @PreAuthorize("authentication.name == principal.username")
     @GetMapping
     public ResponseEntity<?> getSavedRecipes(@RequestParam Integer size, @RequestParam Integer page ) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

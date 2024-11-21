@@ -1,5 +1,5 @@
 package uz.doublem.foodrecipe.enums;
 
 public enum Role {
-    CHEF,USER,ADMIN
+    USER,ADMIN,CHEF
 }

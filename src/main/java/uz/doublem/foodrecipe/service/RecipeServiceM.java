@@ -4,6 +4,7 @@ package uz.doublem.foodrecipe.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,8 @@ public class RecipeServiceM {
     private final UserRepository userRepository;
     private final AttachmentRepository attachmentRepository;
 
+    @Value("${server.base-url}")
+    private String baseUrl;
 
     public ResponseMessage  addRecipe(String json, MultipartFile attachments, User currentUser) {
             ResponseMessage response = new ResponseMessage();
@@ -43,7 +46,9 @@ public class RecipeServiceM {
 //                }
 
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
-
+                if (currentUser.getLocation() == null){
+                    throw new RuntimeException("First, specify your location. To do this, you can go to the edit user section ");
+                }
                 Recipe recipe = new Recipe();
                 boolean b = saveRecipeOnly(recipeDTO, recipe, currentUser);
                 if (!b) {
@@ -54,7 +59,7 @@ public class RecipeServiceM {
                 }
                 response.setText("Recipe SAVED IN STEP 1");
                 addAttachmentsToRecipe(attachments, recipe);
-                response.setText(response.getText() + ", Step 2 >> Attachment VIDEO AND Audio added");
+                response.setText(response.getText() + ", Step 2 >> Attachment added");
 
                 if (!recipeDTO.getIngredientList().isEmpty()) {
                     if (saveIngredientsList(recipeDTO.getIngredientList(), recipe)) {
@@ -68,9 +73,12 @@ public class RecipeServiceM {
                         response.setText(response.getText() + ", Step 4 >> Steps not add");
                     }
                 }
-
-                notificationService.createNotification(recipe, currentUser);
-                notificationService.createNotificationTwo(recipe, currentUser);
+                try {
+                    notificationService.createNotification(recipe, currentUser);
+                    notificationService.createNotificationTwo(recipe, currentUser);
+                }catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
                 response.setText(response.getText() + " >> Finally successfully saved");
                 response.setStatus(true);
                 response.setData(recipe.getId());
@@ -98,7 +106,7 @@ public class RecipeServiceM {
             String title = recipe.getTitle();
             Integer id = recipe.getId();
             String fullTitle = title + "_&" + id;
-            String link = "http://localhost:8080/api/recipeM/link/" + fullTitle;
+            String link = baseUrl+"/recipeM/link/" + fullTitle;
             recipe.setLink(link);
             recipe.setVideoUrl(recipeDTO.getVideoUrl());
             recipeRepositoryM.save(recipe);
@@ -262,6 +270,9 @@ public class RecipeServiceM {
         return getResponseMes(true,"ingredients add to recipe",ingredientDTOAdds);
     }
     public ResponseMessage addRecipeOnly(RecipeDTOaddOnly recipeDTOaddOnly,User user) {
+        if (user.getLocation() == null){
+            throw new RuntimeException("First, specify your location. To do this, you can go to the edit user section ");
+        }
         Recipe recipe = new Recipe();
         RecipeDTOAdd recipeDTOAdd = RecipeDTOAdd.builder()
                 .title(recipeDTOaddOnly.getTitle())
@@ -364,6 +375,7 @@ public class RecipeServiceM {
             if (byId.isPresent()) {
                 Step step = byId.get();
                 step.setDescription(stepsDto.getDescription());
+                stepRepository.save(step);
             }
             else {
                 throw new RuntimeException("step not found with this id : " + stepsDto.getStepId());
