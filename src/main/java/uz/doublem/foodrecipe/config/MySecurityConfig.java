@@ -16,13 +16,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import uz.doublem.foodrecipe.repository.UserRepository;
+
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,7 +42,7 @@ public class MySecurityConfig {
                                .anyRequest().authenticated()
                        )
                        .oauth2Login(oauth -> oauth
-                               .defaultSuccessUrl("/home/oauth2"));
+                               .defaultSuccessUrl("/home/oauth2").failureUrl("/auth/sign-in"));
 
         return http.build();
     }
