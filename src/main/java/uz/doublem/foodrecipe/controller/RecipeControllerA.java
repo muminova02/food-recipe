@@ -50,6 +50,19 @@ public class RecipeControllerA {
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 
+    @GetMapping("/category")
+    public ResponseEntity<?> getAllCategory() {
+        ResponseMessage res = service.getAllRecipe();
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+
+    @GetMapping("/ingredient")
+    public ResponseEntity<?> getAllIngredient() {
+        ResponseMessage res = service.getIngredients();
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
 
 
 
