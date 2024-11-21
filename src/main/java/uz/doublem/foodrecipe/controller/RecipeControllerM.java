@@ -35,7 +35,6 @@ import java.util.Optional;
 public class RecipeControllerM {
 
     private final RecipeServiceM recipeServiceM;
-    private final UserRepository userRepository;
 
     @Operation(summary = "Recipe qo'shish")
     @ApiResponses(value = {
@@ -159,10 +158,10 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
-    @GetMapping("/link/{url}")
+    @GetMapping("/api/link/{url}")
     public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url) {
         Integer recipeId = recipeServiceM.checkRecipeLink(url);
-        URI redirectUri = URI.create("/api/recipeM/" + recipeId);
+        URI redirectUri = URI.create("/recipeM/" + recipeId);
 
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(redirectUri).build();
     }

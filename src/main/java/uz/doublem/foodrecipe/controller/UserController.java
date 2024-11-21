@@ -18,10 +18,9 @@ import uz.doublem.foodrecipe.util.Util;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
     @PreAuthorize("authentication.name == principal.username or hasRole('ROLE_ADMIN')")
     @PutMapping
-    @CachePut(cacheNames = "users", key = "#userEditDTO.email")
+//    @CachePut(cacheNames = "users", key = "#userEditDTO.email")
     public ResponseEntity<?> editUser(@RequestBody UserEditDTO userEditDTO){
         ResponseMessage responseMessage = userService.editUser(Util.getCurrentUser(), userEditDTO);
      return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
