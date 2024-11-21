@@ -11,4 +11,5 @@ public class UserEditDTO {
     private String country;
     private String city;
     private String description;
+    private String password;
 }

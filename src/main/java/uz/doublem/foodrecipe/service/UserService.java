@@ -3,7 +3,9 @@ package uz.doublem.foodrecipe.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import uz.doublem.foodrecipe.config.JwtProvider;
 import uz.doublem.foodrecipe.entity.Location;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
@@ -28,11 +30,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
     private final RecipeRepositoryM recipeRepositoryM;
+    private final PasswordEncoder passwordEncoder;
     public ResponseMessage editUser(User currentUser,UserEditDTO editDTO){
         User user = userRepository.findById(currentUser.getId()).orElseThrow(()->new RuntimeException("user not found!"));
         Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
         user.setName(editDTO.getName());
         user.setRole(Role.valueOf(editDTO.getRole()));
+        if (editDTO.getPassword()!=null||(!user.getPassword().equals(editDTO.getPassword()))) {
+            String encode = passwordEncoder.encode(editDTO.getPassword());
+            user.setPassword_hash(encode);
+        }
         if (optionalLocation.isEmpty()){
             Location location = new Location();
             location.setCountry(editDTO.getCountry());

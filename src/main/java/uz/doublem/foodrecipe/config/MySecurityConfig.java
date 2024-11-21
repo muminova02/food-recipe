@@ -30,8 +30,6 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 @EnableMethodSecurity
 public class MySecurityConfig {
     private final MyFilter myFilter;
-    private final MyUserConfig myUserConfig;
-    private final UserRepository userRepository;
     @Bean
     public PasswordEncoder passwordEncoder(){
             return new BCryptPasswordEncoder();
@@ -40,16 +38,15 @@ public class MySecurityConfig {
     public SecurityFilterChain mySecurity(HttpSecurity http) throws Exception {
 
                http
-               .addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
-               .csrf((c)-> c.disable())
-                       .cors((cr)-> cr.disable())
-                       .userDetailsService(myUserConfig)
-                       .authorizeRequests()
-                       .requestMatchers("/auth/**","/swagger-ui/**",
-                               "/v3/api-docs/**","/api/**")
-                       .permitAll()
-                       .anyRequest()
-                       .authenticated();
+                       .addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
+                       .csrf((c) -> c.disable())
+                       .cors((cr) -> cr.disable())
+                       .authorizeHttpRequests((auth) -> auth
+                               .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/**").permitAll()
+                               .anyRequest().authenticated()
+                       )
+                       .oauth2Login(oauth -> oauth
+                               .defaultSuccessUrl("/home/oauth2"));
 
         return http.build();
     }
