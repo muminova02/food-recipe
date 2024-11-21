@@ -36,5 +36,11 @@ public class HomeController {
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
 
+    @GetMapping("/new-recipes")
+    public ResponseEntity<?> getNewRecipes(@RequestParam Integer size,@RequestParam Integer page){
+        ResponseMessage newRecipes = homeService.getNewRecipes(size,page);
+        return ResponseEntity.status(newRecipes.getStatus()?200:400).body(newRecipes);
+    }
+
 
 }

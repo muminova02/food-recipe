@@ -36,14 +36,12 @@ public class HomeService {
     }
     public ResponseMessage homePageOauth2(String email, OAuth2User principal){
         User user = userRepository.findByEmail(email).orElseGet(() -> {
-            // Создайте нового пользователя, если он не найден
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setName((String) principal.getAttributes().get("name")); // Имя пользователя из OAuth2
+            newUser.setName((String) principal.getAttributes().get("name"));
             newUser.setRole(Role.USER);
             newUser.setVerified(true);
             newUser.setImageUrl((String) principal.getAttributes().get("picture"));
-            // Дальше можно установить другие атрибуты
             userRepository.save(newUser);
             return newUser;
         });
