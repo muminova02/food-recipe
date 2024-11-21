@@ -1,4 +1,3 @@
-
 spring:
   application:
     name: food-app
@@ -23,7 +22,24 @@ spring:
       port: 6379
       timeout: 18000000ms
       database: 0
-
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 783571793262-08qe4hij3s74megcj45aqe2rbfngd7ft.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            scope:
+              - email
+              - profile
+              - openid
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 my_token:
   key: abbosdevrtpkglfdsfjkjdfdsfhsdjglk
   expire_time: 2592000000
