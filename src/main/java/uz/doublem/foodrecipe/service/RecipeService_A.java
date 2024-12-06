@@ -138,4 +138,7 @@ public class RecipeService_A {
         List<Ingredient> all = ingredientRepository.findAll();
         return ResponseMessage.builder().text("this all ingredients").status(true).data(all).build();
     }
+
+
+
 }

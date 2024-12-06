@@ -20,10 +20,10 @@ public class UserController {
     private final UserService userService;
     @PreAuthorize("authentication.name == principal.username or hasRole('ROLE_ADMIN')")
     @PutMapping
-    @CachePut(cacheNames = "users", key = "#userEditDTO.email")
+    @CachePut(value = "users", key = "#userEditDTO.email")
     public ResponseEntity<?> editUser(@RequestBody UserEditDTO userEditDTO){
         ResponseMessage responseMessage = userService.editUser(Util.getCurrentUser(), userEditDTO);
-     return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
+        return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
     @PreAuthorize("authentication.name == principal.username")
     @PostMapping("/following/{followeeId}")

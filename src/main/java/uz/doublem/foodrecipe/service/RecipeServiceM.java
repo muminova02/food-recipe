@@ -525,6 +525,33 @@ public class RecipeServiceM {
         return getResponseMes(true,"steps list",stepDto);
     }
 
+    public ResponseMessage getAllRecipes() {
+        List<Recipe> all = recipeRepositoryM.findAll();
 
+        System.out.println(all.size());
+
+        if(all.isEmpty()){
+            return getResponseMes(true,"recipes does not exist ",Collections.emptyList());
+        }
+        List<RecipeDtoAdminShow> recipes = all.stream().map(allRecipes ->
+                RecipeDtoAdminShow.builder()
+                        .link(allRecipes.getLink())
+                        .category(allRecipes.getCategory())
+                        .createdAt(allRecipes.getCreatedAt())
+                        .viewsCount(allRecipes.getViewsCount())
+                        .title(allRecipes.getTitle())
+                        .imageUrl(allRecipes.getImageUrl())
+                        .videoUrl(allRecipes.getVideoUrl())
+                        .author(allRecipes.getAuthor().getName())
+                        .cookingTime(allRecipes.getCookingTime())
+                        .description(allRecipes.getDescription())
+                        .averageRating(allRecipes.getAverageRating())
+                        .id(allRecipes.getId())
+                        .build()
+        ).toList();
+
+
+        return getResponseMes(true," all recipes",recipes);
+    }
 
 }

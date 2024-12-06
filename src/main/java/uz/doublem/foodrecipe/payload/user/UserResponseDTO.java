@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 import uz.doublem.foodrecipe.entity.Location;
 import uz.doublem.foodrecipe.enums.Role;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponseDTO {
+public class UserResponseDTO implements Serializable {
     private Integer id;
     private String name;
     private String email;

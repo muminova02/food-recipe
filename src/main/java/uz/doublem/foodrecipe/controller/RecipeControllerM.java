@@ -268,4 +268,11 @@ public class RecipeControllerM {
         ResponseMessage res = recipeServiceM.getSteps(id);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
+
+
+    @GetMapping("/get-all-recipes")
+    public ResponseEntity<?> getAllRecipes() {
+        ResponseMessage allRecipes = recipeServiceM.getAllRecipes();
+        return ResponseEntity.status(allRecipes.getStatus()?200:400).body(allRecipes);
+    }
 }
