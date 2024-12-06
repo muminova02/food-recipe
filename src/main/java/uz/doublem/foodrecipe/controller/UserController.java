@@ -1,6 +1,7 @@
 package uz.doublem.foodrecipe.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ public class UserController {
     private final UserService userService;
     @PreAuthorize("authentication.name == principal.username or hasRole('ROLE_ADMIN')")
     @PutMapping
-    @CachePut(value = "users", key = "#userEditDTO.email")
+    @CacheEvict(value = "users", key = "#userEditDTO.email")
     public ResponseEntity<?> editUser(@RequestBody UserEditDTO userEditDTO){
         ResponseMessage responseMessage = userService.editUser(Util.getCurrentUser(), userEditDTO);
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
