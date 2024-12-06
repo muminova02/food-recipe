@@ -59,3 +59,7 @@ photo:
 springdoc:
   swagger-ui:
     operationsSorter: method
+
+
+imgur:
+  client-id: dfc0685027d2c8e

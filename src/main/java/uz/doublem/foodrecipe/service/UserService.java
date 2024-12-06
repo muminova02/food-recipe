@@ -5,7 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import uz.doublem.foodrecipe.config.JwtProvider;
+import org.springframework.web.multipart.MultipartFile;
+import uz.doublem.foodrecipe.entity.Attachment;
 import uz.doublem.foodrecipe.entity.Location;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
@@ -17,7 +18,6 @@ import uz.doublem.foodrecipe.payload.user.*;
 import uz.doublem.foodrecipe.repository.LocationRepository;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
 import uz.doublem.foodrecipe.repository.UserRepository;
-import uz.doublem.foodrecipe.util.Util;
 
 import static uz.doublem.foodrecipe.util.Util.*;
 
@@ -31,6 +31,7 @@ public class UserService {
     private final LocationRepository locationRepository;
     private final RecipeRepositoryM recipeRepositoryM;
     private final PasswordEncoder passwordEncoder;
+    private final AttachmentService attachmentService;
     public ResponseMessage editUser(User currentUser,UserEditDTO editDTO){
         User user = userRepository.findById(currentUser.getId()).orElseThrow(()->new RuntimeException("user not found!"));
         user.setName(editDTO.getName()==null?user.getName():editDTO.getName());
@@ -163,5 +164,12 @@ public class UserService {
                     .build();
         }).toList();
         return getResponseMes(true,"All user list",userDTOList);
+    }
+
+    public ResponseMessage uploadImage(MultipartFile attachment, User currentUser) {
+        Attachment save = attachmentService.save(attachment);
+        currentUser.setImageUrl(save.getUrl());
+        userRepository.save(currentUser);
+        return getResponseMes(true,"saved image",save.getUrl());
     }
 }

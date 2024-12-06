@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponseDTO implements Serializable {
+public class UserResponseDTO {
     private Integer id;
     private String name;
     private String email;

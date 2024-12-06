@@ -32,12 +32,13 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AttachmentService
 {
+    private final ImageUpload imageUpload;
 
-    @Value("${photo.upload.path}")
-    private String photoUploadPath;
+//    @Value("${photo.upload.path}")
+//    private String photoUploadPath;
 
-    @Value("${server.base-url}")
-    private String baseUrl;
+//    @Value("${server.base-url}")
+//    private String baseUrl;
 
     private final AttachmentRepository attachmentRepository;
 
@@ -68,20 +69,20 @@ public class AttachmentService
         }
     }
 
-    public ResponseEntity<byte[]> findById(String id)
-    {
-        try
-        {
-            Attachment attachment = attachmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Photo or video not found with: " + id));
-
-            return getResponseEntity(attachment);
-
-        } catch (IOException e)
-        {
-            logger.error(e.getMessage());
-            throw new RuntimeException("Photo or video not found with: " + id);
-        }
-    }
+//    public ResponseEntity<byte[]> findById(String id)
+//    {
+//        try
+//        {
+//            Attachment attachment = attachmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Photo or video not found with: " + id));
+//
+//            return getResponseEntity(attachment);
+//
+//        } catch (IOException e)
+//        {
+//            logger.error(e.getMessage());
+//            throw new RuntimeException("Photo or video not found with: " + id);
+//        }
+//    }
 
     private static ResponseEntity<byte[]> getResponseEntity(Attachment attachment) throws IOException {
         Path attachmentPath = Paths.get(attachment.getPath());
@@ -122,6 +123,21 @@ public class AttachmentService
         return attachmentRepository.save(new Attachment());
     }
 
+//    public ResponseEntity<byte[]> findByName(String name)
+//    {
+//        try
+//        {
+//            Attachment attachment = attachmentRepository.findByName(name).orElseThrow(() -> new RuntimeException("Attachment not found: " + name));
+//
+//            return getResponseEntity(attachment);
+//
+//        } catch (IOException e)
+//        {
+//            logger.error(e.getMessage());
+//            throw new RuntimeException("Attachment not found: " + name, e);
+//        }
+//    }
+
     public ResponseEntity<byte[]> findByName(String name)
     {
         try
@@ -153,8 +169,8 @@ public class AttachmentService
         }
         try
         {
-            if (fromDb.getPath() != null && !fromDb.getPath().isEmpty())
-                deleteFromFile(fromDb.getPath());
+//            if (fromDb.getPath() != null && !fromDb.getPath().isEmpty())
+//                deleteFromFile(fromDb.getPath());
 
             saveToFile(file, fromDb);
             response.setText("Updated");
@@ -168,20 +184,43 @@ public class AttachmentService
 
     }
 
+//    private void saveToFile(MultipartFile file, Attachment attachment) throws IOException
+//    {
+//        String originalFileName = file.getOriginalFilename();
+//
+//        Path filePath = Paths.get(photoUploadPath +File.separator+ attachment.getId() + originalFileName.substring(originalFileName.lastIndexOf(".")));
+//
+//        file.transferTo(filePath);
+//
+//        attachment.setName(originalFileName);
+//        attachment.setPath(filePath.toFile().getAbsolutePath());
+//        attachment.setType(file.getContentType());
+//        attachment.setUrl(baseUrl + "/attachment/id/" + attachment.getId());
+//    }
+
     private void saveToFile(MultipartFile file, Attachment attachment) throws IOException
     {
         String originalFileName = file.getOriginalFilename();
 
-        Path filePath = Paths.get(photoUploadPath +File.separator+ attachment.getId() + originalFileName.substring(originalFileName.lastIndexOf(".")));
-
-        file.transferTo(filePath);
-
+        String url = imageUpload.uploadImage(file);
         attachment.setName(originalFileName);
-        attachment.setPath(filePath.toFile().getAbsolutePath());
+        attachment.setPath(url);
         attachment.setType(file.getContentType());
-        attachment.setUrl(baseUrl + "/attachment/id/" + attachment.getId());
+        attachment.setUrl(url);
     }
 
+//    public void deleteFromFile(String filePath) throws IOException
+//    {
+//        try
+//        {
+//            if (filePath != null)
+//                Files.delete(Paths.get(filePath));
+//        } catch (IOException e)
+//        {
+//            logger.error(e.getMessage());
+//            throw new IOException(e);
+//        }
+//    }
     public void deleteFromFile(String filePath) throws IOException
     {
         try
@@ -226,15 +265,15 @@ public class AttachmentService
             attachmentRepository.save(attachment11);
         }
 
-        try
-        {
-            deleteFromFile(attachment.getPath());
-            response.setText("Deleted on file");
-        } catch (IOException e)
-        {
-            logger.error(e.getMessage());
-            throw new RuntimeException("Delete failed: " + attachment.getPath());
-        }
+//        try
+//        {
+//            deleteFromFile(attachment.getPath());
+//            response.setText("Deleted on file");
+//        } catch (IOException e)
+//        {
+//            logger.error(e.getMessage());
+//            throw new RuntimeException("Delete failed: " + attachment.getPath());
+//        }
         response.setStatus(true);
         response.setData(id);
         return response;
