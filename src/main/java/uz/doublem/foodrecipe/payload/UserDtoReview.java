@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserDtoReview {
 
-
+            private Integer userId;
             private String fullname;
             private String imageurl;
 

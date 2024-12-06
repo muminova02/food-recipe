@@ -16,5 +16,5 @@ public class UpdateRecipeDto {
     private String recipeName;
     private String recipeDescription;
     private String cookingTime;
-
+    private String videoUrl;
 }

@@ -68,7 +68,7 @@ public class ReviewService_A {
                     User user = review.getUser();
                     ReviewResponceDto dto = new ReviewResponceDto();
                     dto.setReviewId(review.getId());
-                    dto.setAttachment(new UserDtoReview(user.getName(), user.getImageUrl()));
+                    dto.setUserDtoReview(new UserDtoReview(user.getId(),user.getName(), user.getImageUrl()));
                     dto.setComment(review.getComment());
                     dto.setCreated_at(review.getCreatedAt().toString());
                     dto.setLikes_count(review.getLikeCount());

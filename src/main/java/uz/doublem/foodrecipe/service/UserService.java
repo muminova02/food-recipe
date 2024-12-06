@@ -33,21 +33,23 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     public ResponseMessage editUser(User currentUser,UserEditDTO editDTO){
         User user = userRepository.findById(currentUser.getId()).orElseThrow(()->new RuntimeException("user not found!"));
-        Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
-        user.setName(editDTO.getName());
-        user.setRole(Role.valueOf(editDTO.getRole()));
+        user.setName(editDTO.getName()==null?user.getName():editDTO.getName());
+        user.setRole(editDTO.getRole()==null?Role.CHEF:Role.valueOf(editDTO.getRole()));
+        user.setDescription(editDTO.getDescription()==null?user.getDescription():editDTO.getDescription());
+        user.setEmail(editDTO.getEmail()==null?user.getEmail():editDTO.getEmail());
         if (editDTO.getPassword()!=null||(!user.getPassword().equals(editDTO.getPassword()))) {
             String encode = passwordEncoder.encode(editDTO.getPassword());
             user.setPassword_hash(encode);
         }
+        Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
         if (optionalLocation.isEmpty()){
             Location location = new Location();
             location.setCountry(editDTO.getCountry());
             location.setCity(editDTO.getCity());
-            user.setLocation(location);
             locationRepository.save(location);
+            user.setLocation(location);
         } else {
-           Location loc = optionalLocation.get();
+            Location loc = optionalLocation.get();
             user.setLocation(loc);
         }
             userRepository.save(user);
@@ -55,8 +57,14 @@ public class UserService {
                     .id(user.getId())
                     .role(user.getRole())
                     .email(user.getEmail())
-                    .city(user.getLocation().getCity())
-                    .country(user.getLocation().getCountry()).name(user.getName()).build();
+                    .location(user.getLocation())
+                    .name(user.getName())
+                    .description(user.getDescription())
+                    .verified(user.getVerified())
+                    .imageUrl(user.getImageUrl())
+                    .followers_count(user.getFollowers_count())
+                    .following_count(user.getFollowing_count())
+                    .build();
             return ResponseMessage.builder().text("succesfully edited").status(true).data(dto).build();
 
     }
