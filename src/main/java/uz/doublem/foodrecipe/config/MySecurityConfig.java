@@ -38,7 +38,7 @@ public class MySecurityConfig {
                        .csrf((c) -> c.disable())
                        .cors((cr) -> cr.disable())
                        .authorizeHttpRequests((auth) -> auth
-                               .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/**").permitAll()
+                               .requestMatchers("/api/auth/**", "/api/swagger-ui/**", "/api/v3/api-docs/**", "/api/attachment/**").permitAll()
                                .anyRequest().authenticated()
                        )
                        .oauth2Login(oauth -> oauth

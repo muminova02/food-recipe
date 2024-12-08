@@ -1,8 +1,9 @@
+
 spring:
   application:
     name: food-app
   datasource:
-    url: jdbc:postgresql://localhost:5432/food_app
+    url: jdbc:postgresql://localhost:5432/food_recipe
     username: postgres
     password: root123
     driver-class-name: org.postgresql.Driver
@@ -29,7 +30,7 @@ spring:
           google:
             client-id: 783571793262-08qe4hij3s74megcj45aqe2rbfngd7ft.apps.googleusercontent.com
             client-secret: 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
-            redirect-uri: "https://food-recipe-uicr.onrender.com/login/oauth2/code/google"
+            redirect-uri: "http://95.130.227.21:8080/login/oauth2/code/google"
             scope:
               - email
               - profile
@@ -46,7 +47,11 @@ my_token:
 
 
 server:
-  base-url : https://food-recipe-uicr.onrender.com/api
+  base-url : http://95.130.227.21:8080/api
+  servlet:
+    context-path: /api
+  port: 8080
+  address: 0.0.0.0
 
 
 
