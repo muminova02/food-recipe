@@ -158,7 +158,7 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
-    @GetMapping("/api/link/{url}")
+    @GetMapping("/link/{url}")
     public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url) {
         Integer recipeId = recipeServiceM.checkRecipeLink(url);
         URI redirectUri = URI.create("/recipeM/" + recipeId);
