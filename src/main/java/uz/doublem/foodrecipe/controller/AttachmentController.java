@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Photo - Video ")
-@RequestMapping("/api/attachment")
+@RequestMapping("/attachment")
 public class AttachmentController
 {
     private final AttachmentService attachmentService;

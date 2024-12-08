@@ -1,19 +1,17 @@
 package uz.doublem.foodrecipe.service;
 
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import uz.doublem.foodrecipe.config.JwtProvider;
-import uz.doublem.foodrecipe.entity.Attachment;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.enums.Role;
 import uz.doublem.foodrecipe.payload.HomeDTO;
 import uz.doublem.foodrecipe.payload.ResponseHomeRecipeDTO;
+import uz.doublem.foodrecipe.payload.ResponseHomeRecipeDTO2;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.repository.CategoryRepository;
 import uz.doublem.foodrecipe.repository.ReciepesRepository;
@@ -78,11 +76,14 @@ public class HomeService {
     public ResponseMessage getNewRecipes(Integer size,Integer page){
         PageRequest pageRequest = PageRequest.of(page,size);
         Page<Recipe> newRecipes = reciepesRepository.findByOrderByCreatedAtAscAverageRatingDesc(pageRequest);
-        List<ResponseHomeRecipeDTO> list = newRecipes.stream().map(r -> ResponseHomeRecipeDTO.builder().id(r.getId())
+        List<ResponseHomeRecipeDTO2> list = newRecipes.stream().map(r -> ResponseHomeRecipeDTO2.builder().id(r.getId())
                 .title(r.getTitle())
                 .imgUrl(r.getImageUrl())
                 .cookingTime(r.getCookingTime())
                 .averageRating(r.getAverageRating())
+                .ownerId(r.getAuthor().getId())
+                .ownerImage(r.getAuthor().getImageUrl())
+                .ownerName(r.getAuthor().getName())
                 .build()).toList();
         return ResponseMessage.builder().data(list).status(true).text("new recipes ordered").build();
     }
