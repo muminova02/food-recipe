@@ -16,7 +16,7 @@ public class MyUserConfig implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-//    @Cacheable(value = "users", key = "#email")
+    @Cacheable(value = "users", key = "#email")
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         System.out.println("search started");
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("user not found!"));
