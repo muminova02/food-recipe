@@ -38,10 +38,9 @@ public class MySecurityConfig {
                        .csrf((c) -> c.disable())
                        .cors((cr) -> cr.disable())
                        .authorizeHttpRequests((auth) -> auth
-                               .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/attachment/**").permitAll()
+                               .requestMatchers("/api/**", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/attachment/**").permitAll()
                                .anyRequest().authenticated()
                        );
-
         return http.build();
     }
 
