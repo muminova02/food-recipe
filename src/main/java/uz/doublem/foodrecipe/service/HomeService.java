@@ -3,7 +3,6 @@ package uz.doublem.foodrecipe.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import uz.doublem.foodrecipe.config.JwtProvider;
 import uz.doublem.foodrecipe.entity.Recipe;
@@ -38,28 +37,28 @@ public class HomeService {
         return ResponseMessage.builder().data(homeDTO).status(true).build();
     }
 
-    public ResponseMessage homePageOauth2(String email, OAuth2User principal) {
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = new User();
-            newUser.setEmail(email);
-            newUser.setName((String) principal.getAttributes().get("name"));
-            newUser.setRole(Role.USER);
-            newUser.setVerified(true);
-            newUser.setImageUrl((String) principal.getAttributes().get("picture"));
-            userRepository.save(newUser);
-            return newUser;
-        });
-
-        HomeDTO homeDTO = new HomeDTO();
-        homeDTO.setName(user.getName());
-        homeDTO.setEmail(user.getEmail());
-        homeDTO.setAttachment(user.getImageUrl());
-        homeDTO.setCategories(categoryRepository.findAll());
-        Map<String,Object> tokenAndDto = new HashMap<>();
-        String token = jwtProvider.generateToken(user);
-        tokenAndDto.put(token,homeDTO);
-        return ResponseMessage.builder().data(tokenAndDto).status(true).text("userDto with Token").build();
-    }
+//    public ResponseMessage homePageOauth2(String email, OAuth2User principal) {
+//        User user = userRepository.findByEmail(email).orElseGet(() -> {
+//            User newUser = new User();
+//            newUser.setEmail(email);
+//            newUser.setName((String) principal.getAttributes().get("name"));
+//            newUser.setRole(Role.USER);
+//            newUser.setVerified(true);
+//            newUser.setImageUrl((String) principal.getAttributes().get("picture"));
+//            userRepository.save(newUser);
+//            return newUser;
+//        });
+//
+//        HomeDTO homeDTO = new HomeDTO();
+//        homeDTO.setName(user.getName());
+//        homeDTO.setEmail(user.getEmail());
+//        homeDTO.setAttachment(user.getImageUrl());
+//        homeDTO.setCategories(categoryRepository.findAll());
+//        Map<String,Object> tokenAndDto = new HashMap<>();
+//        String token = jwtProvider.generateToken(user);
+//        tokenAndDto.put(token,homeDTO);
+//        return ResponseMessage.builder().data(tokenAndDto).status(true).text("userDto with Token").build();
+//    }
 
     public ResponseMessage getRecipesByCategoryId(Integer id,Integer size, Integer page){
         PageRequest pageRequest = PageRequest.of(page,size);
