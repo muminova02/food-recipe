@@ -99,17 +99,17 @@ public class UserController {
         ResponseMessage res = userService.uploadImage(attachment, currentUser);
         return ResponseEntity.status(201).body(res);
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/redis-cache/{email}")
-    @CacheEvict(value = "users", key = "#email")
-    public ResponseEntity<?> deleteUser(@PathVariable String email) {
-        return ResponseEntity.status(200).body(ResponseMessage.builder()
-                .text("redis cache evict"));
-    }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/redis-cache-all")
-    @CacheEvict(value = "users", allEntries = true)
-    public ResponseEntity<?> clearUsersCache() {
-        return ResponseEntity.ok("All users cache cleared successfully!");
-    }
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @DeleteMapping("/redis-cache/{email}")
+//    @CacheEvict(value = "users", key = "#email")
+//    public ResponseEntity<?> deleteUser(@PathVariable String email) {
+//        return ResponseEntity.status(200).body(ResponseMessage.builder()
+//                .text("redis cache evict"));
+//    }
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @DeleteMapping("/redis-cache-all")
+//    @CacheEvict(value = "users", allEntries = true)
+//    public ResponseEntity<?> clearUsersCache() {
+//        return ResponseEntity.ok("All users cache cleared successfully!");
+//    }
 }

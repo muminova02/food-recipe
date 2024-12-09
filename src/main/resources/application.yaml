@@ -16,12 +16,12 @@ spring:
       max-request-size: 215MB
       max-file-size: 200MB
       file-size-threshold: 2KB
-  data:
-    redis:
-      host: red-cst2b4hu0jms73egb3l0
-      port: 6379
-      timeout: 18000000ms
-      database: 0
+#  data:
+#    redis:
+#      host: red-cst2b4hu0jms73egb3l0
+#      port: 6379
+#      timeout: 18000000ms
+#      database: 0
 my_token:
   key: abbosdevrtpkglfdsfjkjdfdsfhsdjglk
   expire_time: 2592000000
