@@ -37,11 +37,11 @@ public class MySecurityConfig {
                        .addFilterBefore(myFilter, UsernamePasswordAuthenticationFilter.class)
                        .csrf((c) -> c.disable())
                        .cors((cr) -> cr.disable())
-                       .authorizeHttpRequests((auth) -> auth
-                               .requestMatchers("/api/**", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/attachment/**").permitAll()
-                               .anyRequest().authenticated()
+                       .authorizeHttpRequests(authorizeRequests ->
+                               authorizeRequests.anyRequest().permitAll()
                        );
-        return http.build();
+
+            return http.build();
     }
 
 }
