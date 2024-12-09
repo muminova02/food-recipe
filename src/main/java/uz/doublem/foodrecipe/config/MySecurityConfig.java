@@ -38,11 +38,11 @@ public class MySecurityConfig {
                        .csrf((c) -> c.disable())
                        .cors((cr) -> cr.disable())
                        .authorizeHttpRequests((auth) -> auth
-                               .requestMatchers("/api/auth/**", "/api/swagger-ui/**", "/api/v3/api-docs/**", "/api/attachment/**").permitAll()
+                               .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/attachment/**").permitAll()
                                .anyRequest().authenticated()
-                       )
-                       .oauth2Login(oauth -> oauth
-                               .defaultSuccessUrl("/home/oauth2").failureUrl("/auth/sign-in"));
+                       );
+//                       .oauth2Login(oauth -> oauth
+//                               .defaultSuccessUrl("/home/oauth2").failureUrl("/auth/sign-in"));
 
         return http.build();
     }
