@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import uz.doublem.foodrecipe.config.JwtProvider;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.enums.Role;
+import uz.doublem.foodrecipe.payload.EmailDto;
 import uz.doublem.foodrecipe.payload.ResetPasswordDTO;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.user.UserDTO;
@@ -97,13 +98,13 @@ public class AuthService {
     }
 
 
-    public ResponseMessage requestPasswordReset(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
+    public ResponseMessage requestPasswordReset(EmailDto email) {
+        User user = userRepository.findByEmail(email.getEmail()).orElseThrow();
         String code = smsService.generateCode();
         user.setResetPasswordCode(code);
         user.setResetPasswordCodeGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
-        smsService.sendSmsToUser(email, code);
+        smsService.sendSmsToUser(email.getEmail(), code);
         return ResponseMessage.builder().status(true).data(email).text("Reset code sent to your email").build();
     }
 
