@@ -127,8 +127,8 @@ public class UserService {
                 .recipeNumber(countRecipe)
                 .followersCount(user.getFollowers_count())
                 .followingCount(user.getFollowing_count())
-                .country(user.getLocation().getCountry())
-                .country(user.getLocation().getCity())
+                .country(user.getLocation() == null ? "" : user.getLocation().getCountry())
+                .city(user.getLocation() == null ?  "" : user.getLocation().getCity())
                 .build();
         return getResponseMes(true,"user details for profile",build);
     }
