@@ -30,7 +30,7 @@ public class UserController {
     private final UserService userService;
     @PreAuthorize("authentication.name == principal.username or hasRole('ROLE_ADMIN')")
     @PutMapping
-    @CacheEvict(value = "users", key = "#userEditDTO.email")
+//    @CacheEvict(value = "users", key = "#userEditDTO.email")
     public ResponseEntity<?> editUser(@RequestBody UserEditDTO userEditDTO){
         ResponseMessage responseMessage = userService.editUser(Util.getCurrentUser(), userEditDTO);
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
@@ -51,7 +51,7 @@ public class UserController {
         ResponseMessage response = userService.unfollow(id, unFolloweeId);
         return ResponseEntity.status(response.getStatus()?200:400).body(response);
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/byId")
     public ResponseEntity<?> getUser(@RequestParam Integer userId){
 //        Integer id = Util.getCurrentUser().getId();

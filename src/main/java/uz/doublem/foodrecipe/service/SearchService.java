@@ -27,12 +27,12 @@ public class SearchService {
     private final RecipeRepositoryM recipeRepositoryM;
     private final UserRepository userRepository;
 
-    public ResponseMessage getResentSearch(Integer size, Integer page, Integer userId) {
+    public ResponseMessage getResentSearch(Integer size, Integer page, User user) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        if (!userRepository.existsById(userId)) {
-            return Util.getResponseMes(false,"User not found with this id",userId);
-        }
-        Page<RecentSearch> allByUserId = resentSearchRepository.findAllByUser_Id(userId, pageRequest);
+//        if (!userRepository.existsById(userId)) {
+//            return Util.getResponseMes(false,"User not found with this id",userId);
+//        }
+        Page<RecentSearch> allByUserId = resentSearchRepository.findAllByUser_Id(user.getId(), pageRequest);
 
         List<RecipeDtoShow> recipeDtoShowList = allByUserId.get().map(recentSearch -> {
                     Recipe recipe = recentSearch.getRecipe();
@@ -50,7 +50,7 @@ public class SearchService {
         return ResponseMessage.builder()
                 .data(recipeDtoShowList)
                 .status(true)
-                .text("This is the recent search recipe list page for user " + userId)
+                .text("This is the recent search recipe list page for user " + user.getId())
                 .build();
     }
 

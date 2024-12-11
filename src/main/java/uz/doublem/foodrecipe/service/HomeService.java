@@ -62,7 +62,12 @@ public class HomeService {
 
     public ResponseMessage getRecipesByCategoryId(Integer id,Integer size, Integer page){
         PageRequest pageRequest = PageRequest.of(page,size);
-        Page<Recipe> byCategoryId = reciepesRepository.findByCategoryId(id, pageRequest);
+        Page<Recipe> byCategoryId;
+        if (id==1){
+            byCategoryId= reciepesRepository.findAll(pageRequest);
+        }else{
+             byCategoryId = reciepesRepository.findByCategoryId(id, pageRequest);
+        }
         List<ResponseHomeRecipeDTO> list = byCategoryId.stream().map(r -> ResponseHomeRecipeDTO.builder().id(r.getId())
                 .title(r.getTitle())
                 .imgUrl(r.getImageUrl())

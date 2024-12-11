@@ -46,9 +46,9 @@ public class RecipeServiceM {
 //                }
 
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
-                if (currentUser.getLocation() == null){
-                    return getResponseMes(false,"First, specify your location. To do this, you can go to the edit user section ",currentUser);
-                }
+//                if (currentUser.getLocation() == null){
+//                    return getResponseMes(false,"First, specify your location. To do this, you can go to the edit user section ",currentUser);
+//                }
                 Recipe recipe = new Recipe();
                 boolean b = saveRecipeOnly(recipeDTO, recipe, currentUser);
                 if (!b) {

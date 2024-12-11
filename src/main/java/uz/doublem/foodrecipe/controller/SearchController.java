@@ -28,8 +28,9 @@ public class SearchController {
 
     @PreAuthorize("authentication.name == principal.username")
     @GetMapping
-    public ResponseEntity<?> getResentSearch(@RequestParam Integer size,@RequestParam Integer page, @RequestParam Integer userId) {
-        ResponseMessage res = searchService.getResentSearch(size,page,userId);
+    public ResponseEntity<?> getResentSearch(@RequestParam Integer size,@RequestParam Integer page) {
+        User user = Util.getCurrentUser();
+        ResponseMessage res = searchService.getResentSearch(size,page,user);
         return ResponseEntity.status(res.getStatus()?201:400).body(res);
     }
 

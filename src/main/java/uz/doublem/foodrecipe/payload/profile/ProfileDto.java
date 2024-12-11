@@ -19,4 +19,6 @@ public class ProfileDto {
     private String userRole;
     private String description;
     private String authorImg;
+    private String country;
+    private String city;
 }
