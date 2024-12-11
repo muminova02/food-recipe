@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.SavedRecipes;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.payload.RecipeId;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.SavedResponseDto;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
@@ -52,11 +53,11 @@ public class SavedRecipeService {
     }
 
 
-    public ResponseMessage createSavedRecipes(User user, Integer recipeId) {
+    public ResponseMessage createSavedRecipes(User user, RecipeId recipeId) {
         ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.setStatus(false);
         responseMessage.setText("recipe not found "+recipeId);
-        recipeRepository.findById(recipeId).ifPresent(recipe -> {
+        recipeRepository.findById(recipeId.getId()).ifPresent(recipe -> {
             SavedRecipes savedRecipe = new SavedRecipes();
             savedRecipe.setRecipe(recipe);
             savedRecipe.setOwner(user);

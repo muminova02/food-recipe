@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.payload.RecipeId;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.repository.UserRepository;
 import uz.doublem.foodrecipe.service.SavedRecipeService;
@@ -28,7 +29,7 @@ public class SavedRecipeController {
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
     @PostMapping
-    public ResponseEntity<?> createSavedRecipe(@RequestParam Integer recipeId ) {
+    public ResponseEntity<?> createSavedRecipe(@RequestBody RecipeId recipeId ) {
          User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res= savedRecipeService.createSavedRecipes(user,recipeId);
 
