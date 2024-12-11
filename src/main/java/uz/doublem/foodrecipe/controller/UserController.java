@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.doublem.foodrecipe.entity.User;
+import uz.doublem.foodrecipe.payload.RecipeId;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.user.UserEditDTO;
 import uz.doublem.foodrecipe.repository.UserRepository;
@@ -36,19 +37,19 @@ public class UserController {
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);
     }
     @PreAuthorize("authentication.name == principal.username")
-    @PostMapping("/following/{followeeId}")
-    public ResponseEntity<?> following(@PathVariable Integer followeeId){
+    @PostMapping("/following")
+    public ResponseEntity<?> following(@RequestBody RecipeId followeeId){
         Integer id = Util.getCurrentUser().getId();
         System.out.println(id);
-        ResponseMessage response = userService.following(id, followeeId);
+        ResponseMessage response = userService.following(id, followeeId.getId());
         return ResponseEntity.status(response.getStatus()?200:400).body(response);
     }
     @PreAuthorize("authentication.name == principal.username")
-    @PostMapping("/unfollowing/{unFolloweeId}")
-    public ResponseEntity<?> unfollowing(@PathVariable Integer unFolloweeId){
+    @PostMapping("/unfollowing")
+    public ResponseEntity<?> unfollowing(@RequestBody RecipeId unFolloweeId){
         Integer id = Util.getCurrentUser().getId();
         System.out.println(id);
-        ResponseMessage response = userService.unfollow(id, unFolloweeId);
+        ResponseMessage response = userService.unfollow(id, unFolloweeId.getId());
         return ResponseEntity.status(response.getStatus()?200:400).body(response);
     }
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
