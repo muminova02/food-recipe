@@ -158,7 +158,7 @@ public class RecipeControllerM {
         return ResponseEntity.status(res.getStatus() ? 200 : 400).body(res);
     }
 
-    @GetMapping("/api/link/{url}")
+    @GetMapping("/link/{url}")
     public ResponseEntity<?> getSharLink(@PathVariable(name = "url") String url) {
         Integer recipeId = recipeServiceM.checkRecipeLink(url);
         URI redirectUri = URI.create("/recipeM/" + recipeId);
@@ -267,5 +267,12 @@ public class RecipeControllerM {
     public ResponseEntity<?> getSteps(@PathVariable Integer id) {
         ResponseMessage res = recipeServiceM.getSteps(id);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/get-all-recipes")
+    public ResponseEntity<?> getAllRecipes() {
+        ResponseMessage allRecipes = recipeServiceM.getAllRecipes();
+        return ResponseEntity.status(allRecipes.getStatus()?200:400).body(allRecipes);
     }
 }

@@ -46,9 +46,9 @@ public class RecipeServiceM {
 //                }
 
                 RecipeDTOAdd recipeDTO = objectMapper.readValue(json, RecipeDTOAdd.class);
-                if (currentUser.getLocation() == null){
-                    throw new RuntimeException("First, specify your location. To do this, you can go to the edit user section ");
-                }
+//                if (currentUser.getLocation() == null){
+//                    return getResponseMes(false,"First, specify your location. To do this, you can go to the edit user section ",currentUser);
+//                }
                 Recipe recipe = new Recipe();
                 boolean b = saveRecipeOnly(recipeDTO, recipe, currentUser);
                 if (!b) {
@@ -59,8 +59,9 @@ public class RecipeServiceM {
                 }
                 response.setText("Recipe SAVED IN STEP 1");
                 addAttachmentsToRecipe(attachments, recipe);
-                response.setText(response.getText() + ", Step 2 >> Attachment added");
-
+                if (recipe.getImageUrl()==null){
+                    response.setText(response.getText() + ", Step 2 >> Attachment added");
+                }
                 if (!recipeDTO.getIngredientList().isEmpty()) {
                     if (saveIngredientsList(recipeDTO.getIngredientList(), recipe)) {
                         response.setText(response.getText() + ", Step 3 >> Ingredient added ");
@@ -362,6 +363,9 @@ public class RecipeServiceM {
         if (updateRecipeDto.getCookingTime()!=null) {
             recipe.setCookingTime(updateRecipeDto.getCookingTime());
         }
+        if (updateRecipeDto.getVideoUrl()!=null) {
+            recipe.setVideoUrl(updateRecipeDto.getVideoUrl());
+        }
         recipeRepositoryM.save(recipe);
         return getResponseMes(true,"successfully updated recipe ",updateRecipeDto);
     }
@@ -520,4 +524,34 @@ public class RecipeServiceM {
         ).toList();
         return getResponseMes(true,"steps list",stepDto);
     }
+
+    public ResponseMessage getAllRecipes() {
+        List<Recipe> all = recipeRepositoryM.findAll();
+
+        System.out.println(all.size());
+
+        if(all.isEmpty()){
+            return getResponseMes(true,"recipes does not exist ",Collections.emptyList());
+        }
+        List<RecipeDtoAdminShow> recipes = all.stream().map(allRecipes ->
+                RecipeDtoAdminShow.builder()
+                        .link(allRecipes.getLink())
+                        .category(allRecipes.getCategory())
+                        .createdAt(allRecipes.getCreatedAt())
+                        .viewsCount(allRecipes.getViewsCount())
+                        .title(allRecipes.getTitle())
+                        .imageUrl(allRecipes.getImageUrl())
+                        .videoUrl(allRecipes.getVideoUrl())
+                        .author(allRecipes.getAuthor().getName())
+                        .cookingTime(allRecipes.getCookingTime())
+                        .description(allRecipes.getDescription())
+                        .averageRating(allRecipes.getAverageRating())
+                        .id(allRecipes.getId())
+                        .build()
+        ).toList();
+
+
+        return getResponseMes(true," all recipes",recipes);
+    }
+
 }

@@ -68,7 +68,7 @@ public class ReviewService_A {
                     User user = review.getUser();
                     ReviewResponceDto dto = new ReviewResponceDto();
                     dto.setReviewId(review.getId());
-                    dto.setAttachment(new UserDtoReview(user.getName(), user.getImageUrl()));
+                    dto.setUserDtoReview(new UserDtoReview(user.getId(),user.getName(), user.getImageUrl()));
                     dto.setComment(review.getComment());
                     dto.setCreated_at(review.getCreatedAt().toString());
                     dto.setLikes_count(review.getLikeCount());
@@ -82,6 +82,7 @@ public class ReviewService_A {
 
     }
 
+   @Transactional
    public ResponseMessage deleteComment (Integer reviewId, User user) {
        Optional<Review> byId = reviewRepository.findById(reviewId);
        if (byId.isPresent()) {
@@ -99,7 +100,7 @@ public class ReviewService_A {
                    reviewRepository.delete(review);
                    return Util.getResponseMes(true,"delete review success",reviewId);
                   }else {
-                      review.setRating(null);
+                      review.setComment(null);
                       reviewRepository.save(review);
                       return Util.getResponseMes(true,"delete only comment success",reviewId);
                   }

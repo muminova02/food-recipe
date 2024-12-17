@@ -5,11 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import uz.doublem.foodrecipe.config.JwtProvider;
+import org.springframework.web.multipart.MultipartFile;
+import uz.doublem.foodrecipe.entity.Attachment;
 import uz.doublem.foodrecipe.entity.Location;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.enums.Role;
+import uz.doublem.foodrecipe.payload.FollowDTO;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.SavedResponseDto;
 import uz.doublem.foodrecipe.payload.profile.ProfileDto;
@@ -17,7 +19,6 @@ import uz.doublem.foodrecipe.payload.user.*;
 import uz.doublem.foodrecipe.repository.LocationRepository;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
 import uz.doublem.foodrecipe.repository.UserRepository;
-import uz.doublem.foodrecipe.util.Util;
 
 import static uz.doublem.foodrecipe.util.Util.*;
 
@@ -31,23 +32,26 @@ public class UserService {
     private final LocationRepository locationRepository;
     private final RecipeRepositoryM recipeRepositoryM;
     private final PasswordEncoder passwordEncoder;
+    private final AttachmentService attachmentService;
     public ResponseMessage editUser(User currentUser,UserEditDTO editDTO){
         User user = userRepository.findById(currentUser.getId()).orElseThrow(()->new RuntimeException("user not found!"));
-        Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
-        user.setName(editDTO.getName());
-        user.setRole(Role.valueOf(editDTO.getRole()));
+        user.setName(editDTO.getName()==null?user.getName():editDTO.getName());
+        user.setRole(editDTO.getRole()==null?Role.CHEF:Role.valueOf(editDTO.getRole()));
+        user.setDescription(editDTO.getDescription()==null?user.getDescription():editDTO.getDescription());
+        user.setEmail(editDTO.getEmail()==null?user.getEmail():editDTO.getEmail());
         if (editDTO.getPassword()!=null||(!user.getPassword().equals(editDTO.getPassword()))) {
             String encode = passwordEncoder.encode(editDTO.getPassword());
             user.setPassword_hash(encode);
         }
+        Optional<Location> optionalLocation = locationRepository.findByCountryAndCity(editDTO.getCountry(), editDTO.getCity());
         if (optionalLocation.isEmpty()){
             Location location = new Location();
             location.setCountry(editDTO.getCountry());
             location.setCity(editDTO.getCity());
-            user.setLocation(location);
             locationRepository.save(location);
+            user.setLocation(location);
         } else {
-           Location loc = optionalLocation.get();
+            Location loc = optionalLocation.get();
             user.setLocation(loc);
         }
             userRepository.save(user);
@@ -55,8 +59,14 @@ public class UserService {
                     .id(user.getId())
                     .role(user.getRole())
                     .email(user.getEmail())
-                    .city(user.getLocation().getCity())
-                    .country(user.getLocation().getCountry()).name(user.getName()).build();
+                    .location(user.getLocation())
+                    .name(user.getName())
+                    .description(user.getDescription())
+                    .verified(user.getVerified())
+                    .imageUrl(user.getImageUrl())
+                    .followers_count(user.getFollowers_count())
+                    .following_count(user.getFollowing_count())
+                    .build();
             return ResponseMessage.builder().text("succesfully edited").status(true).data(dto).build();
 
     }
@@ -118,6 +128,8 @@ public class UserService {
                 .recipeNumber(countRecipe)
                 .followersCount(user.getFollowers_count())
                 .followingCount(user.getFollowing_count())
+                .country(user.getLocation() == null ? "" : user.getLocation().getCountry())
+                .city(user.getLocation() == null ?  "" : user.getLocation().getCity())
                 .build();
         return getResponseMes(true,"user details for profile",build);
     }
@@ -155,5 +167,34 @@ public class UserService {
                     .build();
         }).toList();
         return getResponseMes(true,"All user list",userDTOList);
+    }
+
+    public ResponseMessage uploadImage(MultipartFile attachment, User currentUser) {
+        Attachment save = attachmentService.save(attachment);
+        currentUser.setImageUrl(save.getUrl());
+        userRepository.save(currentUser);
+        return getResponseMes(true,"saved image",save.getUrl());
+    }
+
+    public ResponseMessage getFollowing(User currentUser) {
+        List<User> following = userRepository.findFollowingByUserId(currentUser.getId());
+        if (following.isEmpty()){
+            return ResponseMessage.builder().status(true).text("no following").build();
+        }
+        List<FollowDTO> followDTOS =  following.stream().map(user -> {
+            return FollowDTO.builder().userId(user.getId()).imgUrl(user.getImageUrl()).name(user.getName()).build();
+        }).toList();
+        return ResponseMessage.builder().status(true).data(followDTOS).build();
+    }
+
+    public ResponseMessage getFollower(User currentUser) {
+        List<User> follower = userRepository.findFollowersByUserId(currentUser.getId());
+        if (follower.isEmpty()){
+            return ResponseMessage.builder().status(true).text("no follower").build();
+        }
+        List<FollowDTO> followDTOS =  follower.stream().map(user -> {
+            return FollowDTO.builder().userId(user.getId()).imgUrl(user.getImageUrl()).name(user.getName()).build();
+        }).toList();
+        return ResponseMessage.builder().status(true).data(followDTOS).build();
     }
 }

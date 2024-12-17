@@ -54,15 +54,15 @@ public class Recipe {
     @Column(name = "views_count")
     private Long viewsCount;
 
-    @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<View> views;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
     private List<IngredientAndQuantity> ingredientAndQuantities;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Step> steps;
 }

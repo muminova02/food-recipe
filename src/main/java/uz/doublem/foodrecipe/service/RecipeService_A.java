@@ -20,7 +20,7 @@ public class RecipeService_A {
     final IngridentsRepository_A ingridentsRepository;
     final RecipeRepository_A recipeRepository;
     final IngredientRepository ingredientRepository;
-
+    private final CategoryRepository categoryRepository;
 
 
 
@@ -127,6 +127,18 @@ public class RecipeService_A {
     private Recipe checkForRecipeId(Integer recipe_id) {
         return recipeRepository.findById(recipe_id).orElseThrow(() -> new RuntimeException("Recipe id do not found"));
     }
+
+
+    public ResponseMessage getAllRecipe() {
+        List<Category> all = categoryRepository.findAll();
+        return ResponseMessage.builder().text("this all category").status(true).data(all).build();
+    }
+
+    public ResponseMessage getIngredients() {
+        List<Ingredient> all = ingredientRepository.findAll();
+        return ResponseMessage.builder().text("this all ingredients").status(true).data(all).build();
+    }
+
 
 
 }

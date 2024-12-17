@@ -35,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/request-password-reset")
-    public ResponseEntity<?> requestPass(@RequestParam String email){
+    public ResponseEntity<?> requestPass(@RequestBody EmailDto email){
 
         ResponseMessage responseMessage = authService.requestPasswordReset(email);
         return ResponseEntity.status(responseMessage.getStatus()?200:400).body(responseMessage);

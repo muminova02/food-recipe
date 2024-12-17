@@ -56,11 +56,10 @@ public class DataLoader implements CommandLineRunner
             User u = new User();
             u.setName("frenky");
             u.setVerified(true);
-            u.setRole(Role.USER);
             u.setPassword_hash(passwordEncoder.encode("root123"));
             u.setEmail("frenky@gmail.com");
             u.setVerificationCode("1234");
-            u.setRole(Role.USER);
+            u.setRole(Role.CHEF);
             User us = new User();
             us.setName("john");
             us.setVerified(true);

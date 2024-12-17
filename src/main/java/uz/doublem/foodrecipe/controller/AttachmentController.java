@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Photo - Video ")
-@RequestMapping("/api/attachment")
+@RequestMapping("/attachment")
 public class AttachmentController
 {
     private final AttachmentService attachmentService;
@@ -51,28 +51,28 @@ public class AttachmentController
         return ResponseEntity.status(201).body(attachmentService.upload(photo));
     }
 
-    @GetMapping("/name/{name}")
-    @Operation(summary = "Show a photo or video by name - Показать фото")
-    public ResponseEntity<byte[]> getAttachmentByName(@PathVariable(name = "name") String name)
-    {
-        return attachmentService.findByName(name);
-    }
+//    @GetMapping("/name/{name}")
+//    @Operation(summary = "Show a photo or video by name - Показать фото")
+//    public ResponseEntity<byte[]> getAttachmentByName(@PathVariable(name = "name") String name)
+//    {
+//        return attachmentService.findByName(name);
+//    }
 
 
 
+//
+//    @GetMapping("/id/{id}")
+//    @Operation(summary = "Show a photo or video by id- Показать фото")
+//    public ResponseEntity<byte[]> getAttachmentById(@PathVariable(name = "id") String  id)
+//    {
+//        return attachmentService.findById(id);
+//    }
 
-    @GetMapping("/id/{id}")
-    @Operation(summary = "Show a photo or video by id- Показать фото")
-    public ResponseEntity<byte[]> getAttachmentById(@PathVariable(name = "id") String  id)
-    {
-        return attachmentService.findById(id);
-    }
-
-    @GetMapping("/{nameOrId}")
-    @Operation(summary = "Show a photo or video by name or ID")
-    public ResponseEntity<byte[]> getAttachmentByNameOrId(@PathVariable(name = "nameOrId") String nameOrId) {
-        return attachmentService.findByNameOrId(nameOrId);
-    }
+//    @GetMapping("/{nameOrId}")
+//    @Operation(summary = "Show a photo or video by name or ID")
+//    public ResponseEntity<byte[]> getAttachmentByNameOrId(@PathVariable(name = "nameOrId") String nameOrId) {
+//        return attachmentService.findByNameOrId(nameOrId);
+//    }
 
 
 

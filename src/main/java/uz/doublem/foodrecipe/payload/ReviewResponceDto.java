@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ReviewResponceDto {
 
     private Integer reviewId;
-    private UserDtoReview attachment;
+    private UserDtoReview userDtoReview;
     private String comment;
     private Integer likes_count;
     private Integer dislikes_count;
