@@ -41,7 +41,7 @@ public class UserController {
     public ResponseEntity<?> following(@RequestBody RecipeId followeeId){
         Integer id = Util.getCurrentUser().getId();
         System.out.println(id);
-        ResponseMessage response = userService.following(id, followeeId.getId());
+        ResponseMessage response = userService.following(id,followeeId.getId());
         return ResponseEntity.status(response.getStatus()?200:400).body(response);
     }
     @PreAuthorize("authentication.name == principal.username")
@@ -100,6 +100,22 @@ public class UserController {
         ResponseMessage res = userService.uploadImage(attachment, currentUser);
         return ResponseEntity.status(201).body(res);
     }
+
+    @GetMapping("/following")
+    public ResponseEntity<?> getFollowing(){
+        User currentUser = Util.getCurrentUser();
+        ResponseMessage res = userService.getFollowing(currentUser);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+    @GetMapping("/follower")
+    public ResponseEntity<?> getFollower(){
+        User currentUser = Util.getCurrentUser();
+        ResponseMessage res = userService.getFollower(currentUser);
+        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
 //    @DeleteMapping("/redis-cache/{email}")
 //    @CacheEvict(value = "users", key = "#email")

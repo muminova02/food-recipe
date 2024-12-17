@@ -11,6 +11,7 @@ import uz.doublem.foodrecipe.entity.Location;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.User;
 import uz.doublem.foodrecipe.enums.Role;
+import uz.doublem.foodrecipe.payload.FollowDTO;
 import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.SavedResponseDto;
 import uz.doublem.foodrecipe.payload.profile.ProfileDto;
@@ -173,5 +174,27 @@ public class UserService {
         currentUser.setImageUrl(save.getUrl());
         userRepository.save(currentUser);
         return getResponseMes(true,"saved image",save.getUrl());
+    }
+
+    public ResponseMessage getFollowing(User currentUser) {
+        List<User> following = userRepository.findFollowingByUserId(currentUser.getId());
+        if (following.isEmpty()){
+            return ResponseMessage.builder().status(true).text("no following").build();
+        }
+        List<FollowDTO> followDTOS =  following.stream().map(user -> {
+            return FollowDTO.builder().userId(user.getId()).imgUrl(user.getImageUrl()).name(user.getName()).build();
+        }).toList();
+        return ResponseMessage.builder().status(true).data(followDTOS).build();
+    }
+
+    public ResponseMessage getFollower(User currentUser) {
+        List<User> follower = userRepository.findFollowersByUserId(currentUser.getId());
+        if (follower.isEmpty()){
+            return ResponseMessage.builder().status(true).text("no follower").build();
+        }
+        List<FollowDTO> followDTOS =  follower.stream().map(user -> {
+            return FollowDTO.builder().userId(user.getId()).imgUrl(user.getImageUrl()).name(user.getName()).build();
+        }).toList();
+        return ResponseMessage.builder().status(true).data(followDTOS).build();
     }
 }
