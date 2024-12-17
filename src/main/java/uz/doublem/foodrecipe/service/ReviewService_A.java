@@ -82,6 +82,7 @@ public class ReviewService_A {
 
     }
 
+   @Transactional
    public ResponseMessage deleteComment (Integer reviewId, User user) {
        Optional<Review> byId = reviewRepository.findById(reviewId);
        if (byId.isPresent()) {
@@ -99,7 +100,7 @@ public class ReviewService_A {
                    reviewRepository.delete(review);
                    return Util.getResponseMes(true,"delete review success",reviewId);
                   }else {
-                      review.setRating(null);
+                      review.setComment(null);
                       reviewRepository.save(review);
                       return Util.getResponseMes(true,"delete only comment success",reviewId);
                   }

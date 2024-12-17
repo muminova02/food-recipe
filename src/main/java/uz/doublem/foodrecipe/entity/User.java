@@ -42,7 +42,7 @@ public class User implements UserDetails {
     private Boolean verified = false;
     private String imageUrl;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany( orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
     private Set<User> followers;

@@ -16,6 +16,7 @@ import uz.doublem.foodrecipe.repository.UserRepository;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -96,4 +97,10 @@ public class NotificationService {
         });
     }
 
+    public Integer updateNotification(Integer id) {
+        Notification notification = notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
+        notification.setHasRead(true);
+        notificationRepository.save(notification);
+        return notification.getRecipe().getId();
+    }
 }

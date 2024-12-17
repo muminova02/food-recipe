@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.doublem.foodrecipe.entity.Recipe;
 import uz.doublem.foodrecipe.entity.SavedRecipes;
 import uz.doublem.foodrecipe.entity.User;
@@ -48,6 +49,7 @@ public class SavedRecipeService {
                 .build();
     }
 
+    @Transactional
     public void unSaveRecipe(Integer id, User user) {
         savedReciepe.findByOwnerIdAndRecipeId(user.getId(),id).ifPresent(savedReciepe::delete);
     }
