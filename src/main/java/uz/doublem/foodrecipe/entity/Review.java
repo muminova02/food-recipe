@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -51,6 +52,9 @@ public class Review {
     private Timestamp createdAt;
 
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<LikeReview> likeReviews;
 
 
 }
