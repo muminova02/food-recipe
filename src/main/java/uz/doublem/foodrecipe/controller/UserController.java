@@ -57,9 +57,9 @@ public class UserController {
     }
     @PreAuthorize("authentication.name == principal.username")
     @GetMapping("/profile-content")
-    public ResponseEntity<?> getUserContent( @RequestParam Integer userId,@RequestParam Integer page,@RequestParam Integer size){
+    public ResponseEntity<?> getUserContent(@RequestParam Integer page,@RequestParam Integer size){
         Integer id = Util.getCurrentUser().getId();
-        ResponseMessage res = userService.getContentsByType(id,userId,page,size);
+        ResponseMessage res = userService.getContentsByType(id,page,size);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")

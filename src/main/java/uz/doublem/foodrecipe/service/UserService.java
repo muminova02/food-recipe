@@ -122,9 +122,9 @@ public class UserService {
         return getResponseMes(true,"user details for profile",build);
     }
 
-    public ResponseMessage getContentsByType(Integer id, Integer userId, Integer page, Integer size) {
-            if (id==null || userId == null){
-                throw new RuntimeException("id or userId is null");
+    public ResponseMessage getContentsByType(Integer userId, Integer page, Integer size) {
+            if (userId == null){
+                throw new RuntimeException("userId is null");
             }
                 PageRequest pageRequest = PageRequest.of(page, size);
                 Page<Recipe> allByAuthorId = recipeRepositoryM.findAllByAuthor_Id(userId, pageRequest);
