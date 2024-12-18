@@ -17,6 +17,7 @@ public class ProfileDto {
     private Integer followingCount;
     private String userName;
     private String userRole;
+    private Boolean isFollow;
     private String description;
     private String authorImg;
     private String country;

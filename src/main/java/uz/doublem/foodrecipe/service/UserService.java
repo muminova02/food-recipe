@@ -19,6 +19,7 @@ import uz.doublem.foodrecipe.payload.user.*;
 import uz.doublem.foodrecipe.repository.LocationRepository;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
 import uz.doublem.foodrecipe.repository.UserRepository;
+import uz.doublem.foodrecipe.util.Util;
 
 import static uz.doublem.foodrecipe.util.Util.*;
 
@@ -128,6 +129,7 @@ public class UserService {
                 .recipeNumber(countRecipe)
                 .followersCount(user.getFollowers_count())
                 .followingCount(user.getFollowing_count())
+                .isFollow(userRepository.existsByIdAndFollowers_Id(Util.getCurrentUser().getId(),userId))
                 .country(user.getLocation() == null ? "" : user.getLocation().getCountry())
                 .city(user.getLocation() == null ?  "" : user.getLocation().getCity())
                 .build();
@@ -196,5 +198,9 @@ public class UserService {
             return FollowDTO.builder().userId(user.getId()).imgUrl(user.getImageUrl()).name(user.getName()).build();
         }).toList();
         return ResponseMessage.builder().status(true).data(followDTOS).build();
+    }
+
+    public Boolean hasUserFollow(Integer currentId, Integer userId) {
+        return userRepository.existsByIdAndFollowers_Id(currentId,userId);
     }
 }

@@ -275,4 +275,7 @@ public class RecipeControllerM {
         ResponseMessage allRecipes = recipeServiceM.getAllRecipes();
         return ResponseEntity.status(allRecipes.getStatus()?200:400).body(allRecipes);
     }
+
+
+
 }

@@ -31,7 +31,7 @@ public class RecipeServiceM {
     private final NotificationService notificationService;
     private final ViewRepository viewRepository;
     private final UserRepository userRepository;
-    private final AttachmentRepository attachmentRepository;
+    private final SavedRecipesRepository savedRecipesRepository;
 
     @Value("${server.base-url}")
     private String baseUrl;
@@ -295,6 +295,13 @@ public class RecipeServiceM {
             return getResponseMes(false,"recipe not found",id);
         }
         Recipe recipe = byId.get();
+        Boolean isSaved= savedRecipesRepository.existsByRecipe_IdAndOwner_Id(id,user.getId());
+        Boolean isFollow;
+        if (user.getId().equals(recipe.getAuthor().getId())) {
+            isFollow = null;
+        }else {
+            isFollow = userRepository.existsByIdAndFollowers_Id(user.getId(),recipe.getAuthor().getId());
+        }
         RecipeResponceDTO build = RecipeResponceDTO.builder()
                     .id(recipe.getId())
                     .title(recipe.getTitle())
@@ -304,6 +311,8 @@ public class RecipeServiceM {
                     .averageRating(recipe.getAverageRating())
                     .viewCount(recipe.getViewsCount())
                     .author(recipe.getAuthor().getName())
+                    .isSaved(isSaved)
+                    .isFollow(isFollow)
                     .authorLocation(recipe.getAuthor().getLocation()!=null?recipe.getAuthor().getLocation().getCountry():"Location is not yet")
                     .authorImageUrl(recipe.getAuthor().getImageUrl()!=null?recipe.getAuthor().getImageUrl():"defoultpath or we deal set null, and front check this")
                     .build();

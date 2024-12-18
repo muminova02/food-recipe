@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -113,6 +114,13 @@ public class UserController {
         User currentUser = Util.getCurrentUser();
         ResponseMessage res = userService.getFollower(currentUser);
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
+    }
+
+    @GetMapping("/hasFollow/{userId}")
+    public ResponseEntity<?> hasFollow(@PathVariable Integer userId){
+        User currentUser = Util.getCurrentUser();
+        Boolean b = userService.hasUserFollow(currentUser.getId(),userId);
+        return ResponseEntity.status(b?200:400).body(b);
     }
 
 

@@ -18,5 +18,8 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
         @Query("SELECT f FROM User u JOIN u.followers f WHERE u.id = :userId")
         List<User> findFollowingByUserId(@Param("userId") Integer userId);
+
+
+        Boolean existsByIdAndFollowers_Id(Integer userId, Integer followerId);
 }
 

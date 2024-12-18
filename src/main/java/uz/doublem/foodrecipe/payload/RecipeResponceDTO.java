@@ -18,6 +18,8 @@ public class RecipeResponceDTO {
     private String author;
     private String authorLocation;
     private String authorImageUrl;
+    private Boolean isFollow;
+    private Boolean isSaved;
     private Double averageRating;
     private Long viewCount;
 
