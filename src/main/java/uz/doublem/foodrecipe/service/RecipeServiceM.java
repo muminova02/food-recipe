@@ -307,7 +307,7 @@ public class RecipeServiceM {
         String locationString = null;
         if (author.getLocation()!=null){
             location = author.getLocation();
-            locationString = location.getCountry() + location.getCity();
+            locationString = location.getCountry() +", " + location.getCity();
         }
         RecipeResponceDTO build = RecipeResponceDTO.builder()
                     .id(recipe.getId())
