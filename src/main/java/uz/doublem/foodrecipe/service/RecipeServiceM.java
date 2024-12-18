@@ -323,7 +323,7 @@ public class RecipeServiceM {
                     .authorId(author.getId())
                     .authorLocation(locationString)
                     .authorImageUrl(author.getImageUrl()!=null? author.getImageUrl():null)
-
+                    .cookingTime(recipe.getCookingTime())
                     .build();
         incrementCountView(recipe,user);
         return getResponseMes(true,"get recipe successfully",build);
