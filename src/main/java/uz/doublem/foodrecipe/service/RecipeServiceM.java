@@ -301,7 +301,8 @@ public class RecipeServiceM {
         if (user.getId().equals(author.getId())) {
             isFollow = null;
         }else {
-            isFollow = userRepository.existsByIdAndFollowers_Id(user.getId(), author.getId());
+            isFollow = userRepository.existsByUserIdAndFollowerId(user.getId(), author.getId());
+            isFollow = isFollow != null && isFollow;
         }
         Location location;
         String locationString = null;

@@ -120,7 +120,7 @@ public class UserController {
     public ResponseEntity<?> hasFollow(@PathVariable Integer userId){
         User currentUser = Util.getCurrentUser();
         Boolean b = userService.hasUserFollow(currentUser.getId(),userId);
-        return ResponseEntity.status(b?200:400).body(b);
+        return ResponseEntity.status(b!=null&&b?200:400).body(b);
     }
 
 

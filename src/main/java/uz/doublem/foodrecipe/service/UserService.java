@@ -129,7 +129,7 @@ public class UserService {
                 .recipeNumber(countRecipe)
                 .followersCount(user.getFollowers_count())
                 .followingCount(user.getFollowing_count())
-                .isFollow(userRepository.existsByIdAndFollowers_Id(Util.getCurrentUser().getId(),userId))
+                .isFollow(userRepository.existsByUserIdAndFollowerId(Util.getCurrentUser().getId(),userId))
                 .country(user.getLocation() == null ? "" : user.getLocation().getCountry())
                 .city(user.getLocation() == null ?  "" : user.getLocation().getCity())
                 .build();
@@ -201,6 +201,6 @@ public class UserService {
     }
 
     public Boolean hasUserFollow(Integer currentId, Integer userId) {
-        return userRepository.existsByIdAndFollowers_Id(currentId,userId);
+        return userRepository.existsByUserIdAndFollowerId(currentId,userId);
     }
 }
