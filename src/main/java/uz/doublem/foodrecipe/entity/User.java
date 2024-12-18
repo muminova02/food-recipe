@@ -78,41 +78,14 @@ public class User implements UserDetails {
     }
 
     public Boolean follow(User userToFollow) {
-        // Проверяем, не подписан ли уже пользователь
         if (!this.followers.contains(userToFollow)) {
-            // Добавляем пользователя в followers текущего пользователя
             this.followers.add(userToFollow);
-
-            // Увеличиваем счетчик подписок
             this.following_count++;
             userToFollow.followers_count++;
-
-            // Возвращаем true, если подписка успешна
             return true;
         }
-        // Если уже подписан, возвращаем false
         return false;
     }
-
-//    public Boolean follow(User userToFollow) {
-//        // Проверяем, не подписан ли уже пользователь
-//        if (!this.followers.contains(userToFollow)) {
-//            // Добавляем пользователя в followers текущего пользователя
-//            this.followers.add(userToFollow);
-//
-//            // Добавляем текущего пользователя в список подписчиков у userToFollow
-//            userToFollow.addFollower(this);
-//
-//            // Увеличиваем счетчик подписок
-//            this.following_count++;
-//            userToFollow.followers_count++;
-//
-//            // Возвращаем true, если подписка успешна
-//            return true;
-//        }
-//        // Если уже подписан, возвращаем false
-//        return false;
-//    }
 
 
     private void addFollower(User user) {
@@ -122,22 +95,13 @@ public class User implements UserDetails {
     }
 
     public Boolean unfollow(User userToUnfollow) {
-        // Проверяем, был ли этот пользователь в списке подписчиков
         if (this.followers.contains(userToUnfollow)) {
-            // Удаляем пользователя из followers текущего пользователя
             this.followers.remove(userToUnfollow);
-//
-//            // Удаляем текущего пользователя из списка подписчиков у userToUnfollow
 //            userToUnfollow.removeFollower(this);
-
-            // Уменьшаем счетчик подписок
             this.following_count--;
             userToUnfollow.followers_count--;
-
-            // Возвращаем true, если отписка успешна
             return true;
         }
-        // Если не был подписан, возвращаем false
         return false;
     }
 
