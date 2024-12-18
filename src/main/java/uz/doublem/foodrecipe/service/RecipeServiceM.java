@@ -297,10 +297,17 @@ public class RecipeServiceM {
         Recipe recipe = byId.get();
         Boolean isSaved= savedRecipesRepository.existsByRecipe_IdAndOwner_Id(id,user.getId());
         Boolean isFollow;
-        if (user.getId().equals(recipe.getAuthor().getId())) {
+        User author = recipe.getAuthor();
+        if (user.getId().equals(author.getId())) {
             isFollow = null;
         }else {
-            isFollow = userRepository.existsByIdAndFollowers_Id(user.getId(),recipe.getAuthor().getId());
+            isFollow = userRepository.existsByIdAndFollowers_Id(user.getId(), author.getId());
+        }
+        Location location;
+        String locationString = null;
+        if (author.getLocation()!=null){
+            location = author.getLocation();
+            locationString = location.getCountry() + location.getCity();
         }
         RecipeResponceDTO build = RecipeResponceDTO.builder()
                     .id(recipe.getId())
@@ -310,11 +317,12 @@ public class RecipeServiceM {
                     .videoUrl(recipe.getVideoUrl())
                     .averageRating(recipe.getAverageRating())
                     .viewCount(recipe.getViewsCount())
-                    .author(recipe.getAuthor().getName())
                     .isSaved(isSaved)
                     .isFollow(isFollow)
-                    .authorLocation(recipe.getAuthor().getLocation()!=null?recipe.getAuthor().getLocation().getCountry():"Location is not yet")
-                    .authorImageUrl(recipe.getAuthor().getImageUrl()!=null?recipe.getAuthor().getImageUrl():"defoultpath or we deal set null, and front check this")
+                    .author(author.getName())
+                    .authorId(author.getId())
+                    .authorLocation(locationString)
+                    .authorImageUrl(author.getImageUrl()!=null? author.getImageUrl():null)
                     .build();
         incrementCountView(recipe,user);
         return getResponseMes(true,"get recipe successfully",build);
