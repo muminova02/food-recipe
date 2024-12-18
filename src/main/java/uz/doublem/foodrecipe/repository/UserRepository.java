@@ -13,10 +13,17 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
         Optional<User> findByEmail(String email);
 
-        @Query("SELECT u FROM User u JOIN u.followers f WHERE f.id = :userId")
+        @Query(value = "SELECT u.* FROM users u " +
+                "JOIN users_followers uf ON u.id = uf.user_id " +
+                "WHERE uf.followers_id = :userId", nativeQuery = true)
         List<User> findFollowersByUserId(@Param("userId") Integer userId);
 
-        @Query("SELECT f FROM User u JOIN u.followers f WHERE u.id = :userId")
+        @Query(value = "SELECT u.* FROM users u " +
+                "JOIN users_followers uf ON u.id = uf.followers_id " +
+                "WHERE uf.user_id = :userId", nativeQuery = true)
         List<User> findFollowingByUserId(@Param("userId") Integer userId);
+
+
+
 }
 
