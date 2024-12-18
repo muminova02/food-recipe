@@ -22,6 +22,7 @@ public class RecipeResponceDTO {
     private Boolean isFollow;
     private Boolean isSaved;
     private Double averageRating;
+    private String cookingTime;
     private Long viewCount;
 
 }
