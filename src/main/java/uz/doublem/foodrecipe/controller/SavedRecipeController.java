@@ -29,19 +29,19 @@ public class SavedRecipeController {
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
     @PostMapping
-    public ResponseEntity<?> createSavedRecipe(@RequestBody RecipeId recipeId ) {
+    public ResponseEntity<?> save(@RequestBody RecipeId recipeId ) {
          User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage res= savedRecipeService.createSavedRecipes(user,recipeId);
-
         return ResponseEntity.status(res.getStatus()?200:400).body(res);
     }
 
 
-    @DeleteMapping
-    public void deleteById(@RequestParam Integer recipeId ) {
-         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        savedRecipeService.unSaveRecipe(recipeId,user);
-    }
+//    @PostMapping
+//    public ResponseEntity<?> deleteById(@RequestParam Integer recipeId ) {
+//         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        ResponseMessage res = savedRecipeService.unSaveRecipe(recipeId, user);
+//        return ResponseEntity.status(res.getStatus()?200:400).body(res);
+//    }
 
 
 

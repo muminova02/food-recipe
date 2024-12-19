@@ -13,6 +13,7 @@ import uz.doublem.foodrecipe.payload.ResponseMessage;
 import uz.doublem.foodrecipe.payload.SavedResponseDto;
 import uz.doublem.foodrecipe.repository.RecipeRepositoryM;
 import uz.doublem.foodrecipe.repository.SavedRecipesRepository;
+import uz.doublem.foodrecipe.util.Util;
 
 import java.util.List;
 
@@ -50,24 +51,31 @@ public class SavedRecipeService {
     }
 
     @Transactional
-    public void unSaveRecipe(Integer id, User user) {
-        savedReciepe.findByOwnerIdAndRecipeId(user.getId(),id).ifPresent(savedReciepe::delete);
+    public ResponseMessage unSaveRecipe(Integer id, User user) {
+            savedReciepe.findByOwner_IdAndRecipe_Id(user.getId(),id).ifPresent(savedReciepe::delete);
+        return Util.getResponseMes(true,"unsave recipe successfully",id);
     }
 
 
+    @Transactional
     public ResponseMessage createSavedRecipes(User user, RecipeId recipeId) {
         ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.setStatus(false);
         responseMessage.setText("recipe not found "+recipeId);
-        recipeRepository.findById(recipeId.getId()).ifPresent(recipe -> {
-            SavedRecipes savedRecipe = new SavedRecipes();
-            savedRecipe.setRecipe(recipe);
-            savedRecipe.setOwner(user);
-            savedReciepe.save(savedRecipe);
-            responseMessage.setText("recipe saved for user ");
-            responseMessage.setStatus(true);
-            notificationService.createNotificationForSavedRecipe(recipe,user);
-        });
+        Integer id = recipeId.getId();
+        if (!savedReciepe.existsByRecipe_IdAndOwner_Id(id,user.getId())) {
+            recipeRepository.findById(id).ifPresent(recipe -> {
+                SavedRecipes savedRecipe = new SavedRecipes();
+                savedRecipe.setRecipe(recipe);
+                savedRecipe.setOwner(user);
+                savedReciepe.save(savedRecipe);
+                responseMessage.setText("recipe saved for user ");
+                responseMessage.setStatus(true);
+//                notificationService.createNotificationForSavedRecipe(recipe,user);
+            });
+        }else {
+            return unSaveRecipe(id, user);
+        }
         return responseMessage;
     }
 }
